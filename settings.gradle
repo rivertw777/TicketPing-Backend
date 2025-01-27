@@ -9,7 +9,7 @@ include ("common:rdb")
 include ("common:caching")
 include ("common:messaging")
 include ("common:monitoring")
-include ("common:resilience4j")
+include ("common:circuit-breaker")
 
 include ("services:auth")
 include ("services:user")

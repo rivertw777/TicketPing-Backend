@@ -1,15 +1,14 @@
 package com.ticketPing.auth.infrastructure.client;
 
+import static circuitbreaker.utils.FeignFallbackUtils.handleFallback;
+
+import circuitbreaker.config.CustomFeignConfig;
 import com.ticketPing.auth.application.client.UserClient;
-import com.ticketPing.auth.common.exception.CircuitBreakerErrorCase;
-import com.ticketPing.auth.infrastructure.config.CustomFeignConfig;
-import exception.ApplicationException;
-import feign.FeignException;
-import feign.RetryableException;
-import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import response.CommonResponse;
@@ -18,28 +17,15 @@ import user.UserResponse;
 
 @FeignClient(name = "user", configuration = CustomFeignConfig.class)
 public interface UserFeignClient extends UserClient {
+
     @GetMapping("/api/v1/users/login")
     @Retry(name = "userServiceRetry")
-    @CircuitBreaker(name = "userServiceCircuitBreaker", fallbackMethod = "fallbackForUserService")
-    CommonResponse<UserResponse> getUserByEmailAndPassword(@RequestBody UserLookupRequest userLookupRequest);
+    @CircuitBreaker(name = "userServiceCircuitBreaker", fallbackMethod = "fallbackForGetUserByEmailAndPassword")
+    ResponseEntity<CommonResponse<UserResponse>> getUserByEmailAndPassword(@RequestBody UserLookupRequest userLookupRequest);
 
-    default CommonResponse<UserResponse> fallbackForUserService(UserLookupRequest userLookupRequest, Throwable cause) {
-        if (cause instanceof CallNotPermittedException) {
-            throw new ApplicationException(CircuitBreakerErrorCase.SERVICE_IS_OPEN);
-        }
-        else if (
-                cause instanceof FeignException.GatewayTimeout ||
-                cause instanceof FeignException.ServiceUnavailable ||
-                cause instanceof FeignException.BadGateway ||
-                cause instanceof FeignException.TooManyRequests ||
-                cause instanceof RetryableException
-        ) {
-            throw new ApplicationException(CircuitBreakerErrorCase.SERVICE_UNAVAILABLE);
-        }
-        else if (cause instanceof FeignException) {
-            throw (FeignException) cause;
-        } else {
-            throw new ApplicationException(CircuitBreakerErrorCase.SERVICE_UNAVAILABLE);
-        }
+    default ResponseEntity<CommonResponse<UserResponse>> fallbackForGetUserByEmailAndPassword(UserLookupRequest userLookupRequest, Throwable cause) {
+        handleFallback(cause);
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
     }
+
 }

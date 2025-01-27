@@ -1,6 +1,6 @@
 package com.ticketPing.payment.domain.model.entity;
 
-import audit.BaseEntity;
+import auditing.BaseEntity;
 import com.ticketPing.payment.domain.model.enums.PaymentStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;

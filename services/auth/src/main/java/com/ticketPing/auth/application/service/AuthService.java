@@ -14,11 +14,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import user.UserLookupRequest;
 import user.UserResponse;
-
 import java.util.UUID;
 
 import static com.ticketPing.auth.common.constants.AuthConstants.BEARER_PREFIX;
-
 
 @Service
 @RequiredArgsConstructor
@@ -64,7 +62,7 @@ public class AuthService {
 
     private UUID authenticateUser(LoginRequest loginRequest) {
         UserLookupRequest request = new UserLookupRequest(loginRequest.email(), loginRequest.password());
-        UserResponse userResponse = userClient.getUserByEmailAndPassword(request).getData();
+        UserResponse userResponse = userClient.getUserByEmailAndPassword(request).getBody().getData();
         return userResponse.userId();
     }
 

@@ -7,7 +7,7 @@ spring:
       - "classpath:application-eureka.yml"
       - "classpath:application-redis.yml"
       - "classpath:application-monitoring.yml"
-      - "classpath:application-circuit-breaker.yml"
+      - "classpath:application-resilience4j.yml"
 
 server:
   port: 10010

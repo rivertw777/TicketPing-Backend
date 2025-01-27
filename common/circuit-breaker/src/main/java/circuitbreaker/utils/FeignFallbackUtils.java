@@ -1,10 +1,10 @@
-package com.ticketPing.order.common.utils;
+package circuitbreaker.utils;
 
-import com.ticketPing.order.common.exception.CircuitBreakerErrorCase;
+import circuitbreaker.exception.CircuitBreakerErrorCase;
 import exception.ApplicationException;
 import feign.FeignException;
-import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import feign.RetryableException;
+import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 
 public class FeignFallbackUtils {
 
@@ -30,4 +30,5 @@ public class FeignFallbackUtils {
             throw new ApplicationException(CircuitBreakerErrorCase.SERVICE_UNAVAILABLE);
         }
     }
+
 }
