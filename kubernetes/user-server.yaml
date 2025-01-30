@@ -39,5 +39,7 @@ spec:
               value: ${USER_POSTGRES_USERNAME}
             - name: USER_POSTGRES_PASSWORD
               value: ${USER_POSTGRES_PASSWORD}
+            - name: LOKI_HOST
+              value: ${LOKI_HOST}
             - name: ZIPKIN
               value: ${ZIPKIN}

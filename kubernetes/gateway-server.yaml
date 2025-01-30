@@ -45,6 +45,8 @@ spec:
               value: ${REDIS_NODE_5}
             - name: REDIS_NODE_6
               value: ${REDIS_NODE_6}
+            - name: LOKI_HOST
+              value: ${LOKI_HOST}
             - name: ZIPKIN
               value: ${ZIPKIN}
             - name: FRONTEND_APP_URL

@@ -51,6 +51,8 @@ spec:
               value: ${KAFKA_BROKER_2}
             - name: KAFKA_BROKER_3
               value: ${KAFKA_BROKER_3}
+            - name: LOKI_HOST
+              value: ${LOKI_HOST}
             - name: ZIPKIN
               value: ${ZIPKIN}
             - name: USER_TOKEN_SECRET_KEY
