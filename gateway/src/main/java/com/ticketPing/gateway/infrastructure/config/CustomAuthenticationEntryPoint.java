@@ -1,12 +1,11 @@
 package com.ticketPing.gateway.infrastructure.config;
 
-import static com.ticketPing.gateway.common.exception.SecurityErrorCase.EXPIRED_TOKEN;
-
+import com.ticketPing.gateway.common.exception.SecurityErrorCase;
 import java.nio.charset.StandardCharsets;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.buffer.DataBuffer;
-import org.springframework.http.MediaType;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.server.ServerAuthenticationEntryPoint;
@@ -24,11 +23,10 @@ public class CustomAuthenticationEntryPoint implements ServerAuthenticationEntry
     @Override
     public Mono<Void> commence(ServerWebExchange exchange, AuthenticationException ex) {
         ServerHttpResponse response = exchange.getResponse();
-        response.setStatusCode(EXPIRED_TOKEN.getHttpStatus());
-        response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
+        response.setStatusCode(HttpStatus.UNAUTHORIZED);
         response.getHeaders().setAccessControlAllowOrigin(clientUrl);
         response.getHeaders().setAccessControlAllowCredentials(true);
-        String responseBody = EXPIRED_TOKEN.getMessage();
+        String responseBody = SecurityErrorCase.UNAUTHORIZED.getMessage();
         DataBuffer dataBuffer = response.bufferFactory().wrap(responseBody.getBytes(StandardCharsets.UTF_8));
         return response.writeWith(Mono.just(dataBuffer));
     }

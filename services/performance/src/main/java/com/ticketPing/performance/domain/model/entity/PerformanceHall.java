@@ -1,10 +1,9 @@
 package com.ticketPing.performance.domain.model.entity;
 
-import audit.BaseEntity;
+import auditing.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @Getter

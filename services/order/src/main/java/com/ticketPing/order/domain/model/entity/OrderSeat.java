@@ -1,6 +1,6 @@
 package com.ticketPing.order.domain.model.entity;
 
-import audit.BaseEntity;
+import auditing.BaseEntity;
 import jakarta.persistence.*;
 
 import java.util.UUID;

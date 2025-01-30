@@ -40,7 +40,7 @@ dependencies {
 	implementation project(':common:rdb')
 	implementation project(':common:messaging')
 	implementation project(':common:monitoring')
-    implementation project(':common:resilience4j')
+    implementation project(':common:circuit-breaker')
 
     // MVC
 	implementation 'org.springframework.boot:spring-boot-starter-web'

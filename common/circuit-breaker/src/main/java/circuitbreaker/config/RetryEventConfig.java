@@ -1,4 +1,4 @@
-package resilience4j.config;
+package circuitbreaker.config;
 
 import io.github.resilience4j.retry.RetryRegistry;
 import io.github.resilience4j.retry.event.RetryOnRetryEvent;

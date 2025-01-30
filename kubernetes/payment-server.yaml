@@ -1,0 +1,53 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: order-server-service
+spec:
+  selector:
+    app: order-server
+  type: ClusterIP
+  ports:
+    - protocol: TCP
+      port: 10014
+      targetPort: 10014
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment-server-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: payment-server
+  template:
+    metadata:
+      labels:
+        app: payment-server
+    spec:
+      containers:
+        - name: payment-server
+          image: taewon171/payment-server:latest
+          ports:
+            - containerPort: 10014
+          env:
+            - name: EUREKA_SERVER
+              value: ${EUREKA_SERVER}
+            - name: PAYMENT_POSTGRES_URL
+              value: ${PAYMENT_POSTGRES_URL}
+            - name: PAYMENT_POSTGRES_USERNAME
+              value: ${PAYMENT_POSTGRES_USERNAME}
+            - name: PAYMENT_POSTGRES_PASSWORD
+              value: ${PAYMENT_POSTGRES_PASSWORD}
+            - name: KAFKA_BROKER_1
+              value: ${KAFKA_BROKER_1}
+            - name: KAFKA_BROKER_2
+              value: ${KAFKA_BROKER_2}
+            - name: KAFKA_BROKER_3
+              value: ${KAFKA_BROKER_3}
+            - name: ZIPKIN
+              value: ${ZIPKIN}
+            - name: TOSS_PAYMENT_WIDGET_SECRET_KEY
+              value: ${TOSS_PAYMENT_WIDGET_SECRET_KEY}
+            - name: TOSS_PAYMENT_CONFIRM_URL
+              value: ${TOSS_PAYMENT_CONFIRM_URL}

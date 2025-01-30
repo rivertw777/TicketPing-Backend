@@ -1,0 +1,61 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: order-server-service
+spec:
+  selector:
+    app: order-server
+  type: ClusterIP
+  ports:
+    - protocol: TCP
+      port: 10013
+      targetPort: 10013
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order-server-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: order-server
+  template:
+    metadata:
+      labels:
+        app: order-server
+    spec:
+      containers:
+        - name: order-server
+          image: taewon171/order-server:latest
+          ports:
+            - containerPort: 10013
+          env:
+            - name: EUREKA_SERVER
+              value: ${EUREKA_SERVER}
+            - name: ORDER_POSTGRES_URL
+              value: ${ORDER_POSTGRES_URL}
+            - name: ORDER_POSTGRES_USERNAME
+              value: ${ORDER_POSTGRES_USERNAME}
+            - name: ORDER_POSTGRES_PASSWORD
+              value: ${ORDER_POSTGRES_PASSWORD}
+            - name: REDIS_NODE_1
+              value: ${REDIS_NODE_1}
+            - name: REDIS_NODE_2
+              value: ${REDIS_NODE_2}
+            - name: REDIS_NODE_3
+              value: ${REDIS_NODE_3}
+            - name: REDIS_NODE_4
+              value: ${REDIS_NODE_4}
+            - name: REDIS_NODE_5
+              value: ${REDIS_NODE_5}
+            - name: REDIS_NODE_6
+              value: ${REDIS_NODE_6}
+            - name: KAFKA_BROKER_1
+              value: ${KAFKA_BROKER_1}
+            - name: KAFKA_BROKER_2
+              value: ${KAFKA_BROKER_2}
+            - name: KAFKA_BROKER_3
+              value: ${KAFKA_BROKER_3}
+            - name: ZIPKIN
+              value: ${ZIPKIN}

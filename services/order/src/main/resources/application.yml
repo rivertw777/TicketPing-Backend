@@ -14,7 +14,7 @@ spring:
       - "classpath:application-jpa.yml"
       - "classpath:application-kafka.yml"
       - "classpath:application-monitoring.yml"
-      - "classpath:application-circuit-breaker.yml"
+      - "classpath:application-resilience4j.yml"
 
 server:
   port: 10013

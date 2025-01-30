@@ -1,7 +1,7 @@
 package com.ticketPing.order.domain.model.entity;
 
 
-import audit.BaseEntity;
+import auditing.BaseEntity;
 import com.ticketPing.order.domain.model.enums.OrderStatus;
 import jakarta.persistence.*;
 import lombok.*;

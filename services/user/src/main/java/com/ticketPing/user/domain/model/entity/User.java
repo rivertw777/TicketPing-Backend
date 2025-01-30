@@ -1,6 +1,6 @@
 package com.ticketPing.user.domain.model.entity;
 
-import audit.BaseEntity;
+import auditing.BaseEntity;
 import com.ticketPing.user.presentation.request.CreateUserRequest;
 import jakarta.persistence.*;
 import lombok.*;
