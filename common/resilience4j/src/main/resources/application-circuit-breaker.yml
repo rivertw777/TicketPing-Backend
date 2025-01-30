@@ -4,7 +4,18 @@ spring:
       circuitbreaker: enabled
 
 resilience4j:
+  retry:
+    retry-aspect-order: 2
+    configs:
+      default:
+        max-attempts: 3
+        wait-duration: 500ms
+        retry-exceptions:
+          - feign.RetryableException
+          - feign.FeignException.ServiceUnavailable
+
   circuitbreaker:
+    circuit-breaker-aspect-order: 1
     configs:
       default:
         registerHealthIndicator: true
@@ -18,10 +29,6 @@ resilience4j:
         permittedNumberOfCallsInHalfOpenState: 3
         recordSlowCalls: true
         record-exceptions:
-          - java.util.concurrent.TimeoutException
-          - java.net.SocketTimeoutException
-          - java.net.UnknownHostException
-          - java.net.ConnectException
           - feign.RetryableException
           - feign.FeignException.GatewayTimeout
           - feign.FeignException.BadGateway

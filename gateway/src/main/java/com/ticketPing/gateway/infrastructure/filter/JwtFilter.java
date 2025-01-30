@@ -1,5 +1,7 @@
 package com.ticketPing.gateway.infrastructure.filter;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ticketPing.gateway.application.client.AuthClient;
 import exception.ApplicationException;
 import lombok.RequiredArgsConstructor;
@@ -56,15 +58,33 @@ public class JwtFilter implements ServerSecurityContextRepository {
 
                     return Mono.just((SecurityContext) new SecurityContextImpl(authentication));
                 })
-                .onErrorResume(ApplicationException.class, e -> {
-                    exchange.getResponse().setStatusCode(HttpStatus.SERVICE_UNAVAILABLE);
-                    DataBuffer buffer = exchange.getResponse()
-                            .bufferFactory()
-                            .wrap(e.getMessage().getBytes(StandardCharsets.UTF_8));
-                    return exchange.getResponse().writeWith(Mono.just(buffer))
-                            .then(Mono.empty());
-                })
-                .onErrorResume(WebClientResponseException.Unauthorized.class, e -> Mono.empty());
+                .onErrorResume(ApplicationException.class, e -> handleErrorResponse(exchange, e.getMessage(), HttpStatus.SERVICE_UNAVAILABLE))
+                .onErrorResume(WebClientResponseException.Unauthorized.class, e -> {
+                    exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+                    return extractMessageFromResponse(e)
+                            .flatMap(message -> handleErrorResponse(exchange, message, HttpStatus.UNAUTHORIZED));
+                });
+    }
+
+    private Mono<SecurityContext> handleErrorResponse(ServerWebExchange exchange, String message, HttpStatus status) {
+        exchange.getResponse().setStatusCode(status);
+        DataBuffer buffer = exchange.getResponse()
+                .bufferFactory()
+                .wrap(message.getBytes(StandardCharsets.UTF_8));
+        return exchange.getResponse().writeWith(Mono.just(buffer)).then(Mono.empty());
+    }
+
+    private Mono<String> extractMessageFromResponse(WebClientResponseException e) {
+        String responseBody = e.getResponseBodyAsString();
+
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode jsonNode = objectMapper.readTree(responseBody);
+            String message = jsonNode.path("message").asText("");
+            return Mono.just(message);
+        } catch (Exception ex) {
+            return Mono.just("");
+        }
     }
 
 }

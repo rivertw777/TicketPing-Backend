@@ -20,6 +20,11 @@ jwt:
     expiration: 604800000  # 7일
 
 resilience4j:
+  retry:
+    instances:
+      userServiceRetry:
+        baseConfig: default
+
   circuitbreaker:
     instances:
       userServiceCircuitBreaker:

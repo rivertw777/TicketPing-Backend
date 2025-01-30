@@ -20,6 +20,13 @@ server:
   port: 10013
 
 resilience4j:
+  retry:
+    instances:
+      performanceServiceRetry:
+        baseConfig: default
+      paymentServiceRetry:
+        baseConfig: default
+
   circuitbreaker:
     instances:
       performanceServiceCircuitBreaker:

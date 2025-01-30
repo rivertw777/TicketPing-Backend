@@ -40,9 +40,9 @@ dependencies {
 	implementation project(':common:rdb')
 	implementation project(':common:messaging')
 	implementation project(':common:monitoring')
-	implementation project(':common:circuit-breaker')
+    implementation project(':common:resilience4j')
 
-	// MVC
+    // MVC
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 
 	// Cloud

@@ -3,12 +3,11 @@ package com.ticketPing.gateway.infrastructure.client;
 import auth.UserCacheDto;
 import com.ticketPing.gateway.application.client.AuthClient;
 import com.ticketPing.gateway.common.exception.CircuitBreakerErrorCase;
-import com.ticketPing.gateway.common.exception.SecurityErrorCase;
 import exception.ApplicationException;
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
 import io.netty.channel.ChannelOption;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.stereotype.Component;
@@ -20,7 +19,6 @@ import response.CommonResponse;
 
 import java.time.Duration;
 
-@Slf4j
 @Component
 public class AuthWebClient implements AuthClient {
 
@@ -35,6 +33,7 @@ public class AuthWebClient implements AuthClient {
                 .build();
     }
 
+    @Retry(name = "authServiceRetry")
     @CircuitBreaker(name = "authServiceCircuitBreaker", fallbackMethod = "validateTokenFallback")
     public Mono<UserCacheDto> validateToken(String token) {
         return webClient.post()
@@ -42,13 +41,7 @@ public class AuthWebClient implements AuthClient {
                 .header("Authorization", token)
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<CommonResponse<UserCacheDto>>() {})
-                .flatMap(response -> {
-                    if (response.getData() != null) {
-                        return Mono.just(response.getData());
-                    } else {
-                        return Mono.error(new ApplicationException(SecurityErrorCase.USER_CACHE_IS_NULL));
-                    }
-                });
+                .flatMap(response -> Mono.just(response.getData()));
     }
 
     private Mono<UserCacheDto> validateTokenFallback(String token, Throwable ex) {

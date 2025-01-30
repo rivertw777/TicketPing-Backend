@@ -33,11 +33,24 @@ token-value:
   secret-key: ${USER_TOKEN_SECRET_KEY}
 
 resilience4j:
+  retry:
+    retry-aspect-order: 2
+    configs:
+      default:
+        max-attempts: 3
+        wait-duration: 500ms
+      authServiceRetry:
+        retry-exceptions:
+          - org.springframework.web.reactive.function.client.WebClientRequestException
+          - org.springframework.web.reactive.function.client.WebClientResponseException.ServiceUnavailable
+
   timelimiter:
     configs:
       default:
         timeout-duration: 15s
+
   circuitbreaker:
+    circuit-breaker-aspect-order: 1
     configs:
       default:
         registerHealthIndicator: true

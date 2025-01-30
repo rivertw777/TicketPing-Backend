@@ -1,5 +1,7 @@
 package com.ticketPing.order.presentation.controller;
 
+import com.ticketPing.order.application.client.PaymentClient;
+import com.ticketPing.order.application.client.PerformanceClient;
 import com.ticketPing.order.application.dtos.OrderResponse;
 import com.ticketPing.order.application.service.OrderService;
 import com.ticketPing.order.presentation.request.CreateOrderRequest;
@@ -22,6 +24,15 @@ import static response.CommonResponse.success;
 public class OrderController {
 
     private final OrderService orderService;
+    private final PaymentClient performanceClient;
+
+    @PostMapping("/test")
+    public ResponseEntity<CommonResponse<Object>> test() {
+        performanceClient.getCompletedPaymentByOrderId(UUID.randomUUID());
+        return ResponseEntity
+                .status(200)
+                .body(success());
+    }
 
     @Operation(summary = "예매 좌석 생성")
     @PostMapping
