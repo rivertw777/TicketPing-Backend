@@ -6,10 +6,6 @@ services:
     image: ticketping/eureka-server:latest
     ports:
       - "10000:10000"
-    env_file:
-      - .env
-    environment:
-      - EUREKA_SERVER=${EUREKA_SERVER}
 
   gateway-server:
     container_name: gateway-server
@@ -93,7 +89,6 @@ services:
       - PERFORMANCE_POSTGRES_URL=${PERFORMANCE_POSTGRES_URL}
       - PERFORMANCE_POSTGRES_USERNAME=${PERFORMANCE_POSTGRES_USERNAME}
       - PERFORMANCE_POSTGRES_PASSWORD=${PERFORMANCE_POSTGRES_PASSWORD}
-      - DISCORD_WEBHOOK_URL=${GF_DISCORD_WEBHOOK_URL}
       - REDIS_NODE_1=${REDIS_NODE_1}
       - REDIS_NODE_2=${REDIS_NODE_2}
       - REDIS_NODE_3=${REDIS_NODE_3}
@@ -101,6 +96,7 @@ services:
       - REDIS_NODE_5=${REDIS_NODE_5}
       - REDIS_NODE_6=${REDIS_NODE_6}
       - ZIPKIN=${ZIPKIN}
+      - DISCORD_WEBHOOK_URL=${GF_DISCORD_WEBHOOK_URL}
     depends_on:
       eureka-server:
         condition: service_started

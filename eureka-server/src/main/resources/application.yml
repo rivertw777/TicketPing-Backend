@@ -7,9 +7,7 @@ server:
 
 eureka:
   client:
-    register-with-eureka: true
-    fetch-registry: true
-    service-url:
-      defaultZone: ${EUREKA_SERVER}
+    register-with-eureka: false
+    fetch-registry: false
   instance:
     hostname: eureka-server
