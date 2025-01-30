@@ -4,5 +4,5 @@ import auth.UserCacheDto;
 import reactor.core.publisher.Mono;
 
 public interface AuthClient {
-    public Mono<UserCacheDto> validateToken(String token);
+    Mono<UserCacheDto> validateToken(String token);
 }

@@ -42,6 +42,7 @@ dependencies {
 
 	// MVC
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
 
 	// Cloud
 	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'

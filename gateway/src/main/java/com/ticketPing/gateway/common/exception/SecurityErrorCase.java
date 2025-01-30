@@ -9,7 +9,8 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum SecurityErrorCase implements ErrorCase {
 
-    USER_CACHE_IS_NULL(HttpStatus.INTERNAL_SERVER_ERROR, "내부 서버 오류");
+    USER_CACHE_IS_NULL(HttpStatus.INTERNAL_SERVER_ERROR, "내부 서버 오류"),
+    EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "토큰이 만료되었습니다.");
 
     private final HttpStatus httpStatus;
     private final String message;

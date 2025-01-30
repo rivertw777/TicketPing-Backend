@@ -3,6 +3,7 @@ package com.ticketPing.queue_manage.infrastructure.repository;
 import static com.ticketPing.queue_manage.common.utils.TTLConverter.toLocalDateTime;
 
 import com.ticketPing.queue_manage.domain.command.workingQueue.DeleteWorkingQueueTokenCommand;
+import com.ticketPing.queue_manage.domain.command.workingQueue.ExtendWorkingQueueTokenTTLCommand;
 import com.ticketPing.queue_manage.domain.command.workingQueue.InsertWorkingQueueTokenCommand;
 import com.ticketPing.queue_manage.domain.command.workingQueue.FindWorkingQueueTokenCommand;
 import com.ticketPing.queue_manage.domain.model.WorkingQueueToken;
@@ -73,6 +74,7 @@ public class WorkingQueueRepositoryImpl implements WorkingQueueRepository {
 
     private Mono<Boolean> handleOrderCompleted(String queueName, String tokenValue) {
         RBucketReactive<String> bucket = redissonRepository.getBucket(tokenValue);
+
         return handleIfTokenExists(queueName, bucket)
                 .defaultIfEmpty(false);
     }
@@ -92,6 +94,22 @@ public class WorkingQueueRepositoryImpl implements WorkingQueueRepository {
 
     private Mono<Long> decrementQueueCounter(String queueName) {
         return redissonRepository.getCounter(queueName).decrementAndGet();
+    }
+
+    @Override
+    public Mono<WorkingQueueToken> extendWorkingQueueTokenTTL(ExtendWorkingQueueTokenTTLCommand command) {
+        RBucketReactive<String> bucket = redissonRepository.getBucket(command.getTokenValue());
+
+        return bucket.expire(command.getTtlInMinutes(), TimeUnit.MINUTES)
+                .then(
+                        bucket.remainTimeToLive()
+                                .flatMap(ttl -> WorkingQueueToken.withValidUntil(
+                                        command.getUserId(),
+                                        command.getPerformanceId(),
+                                        command.getTokenValue(),
+                                        toLocalDateTime(ttl)
+                                ))
+                );
     }
 
 }

@@ -1,6 +1,7 @@
 package com.ticketPing.queue_manage.domain.repository;
 
 import com.ticketPing.queue_manage.domain.command.workingQueue.DeleteWorkingQueueTokenCommand;
+import com.ticketPing.queue_manage.domain.command.workingQueue.ExtendWorkingQueueTokenTTLCommand;
 import com.ticketPing.queue_manage.domain.command.workingQueue.InsertWorkingQueueTokenCommand;
 import com.ticketPing.queue_manage.domain.command.workingQueue.FindWorkingQueueTokenCommand;
 import com.ticketPing.queue_manage.domain.model.WorkingQueueToken;
@@ -10,4 +11,5 @@ public interface WorkingQueueRepository {
     Mono<Boolean> insertWorkingQueueToken(InsertWorkingQueueTokenCommand command);
     Mono<WorkingQueueToken> findWorkingQueueToken(FindWorkingQueueTokenCommand command);
     Mono<Boolean> deleteWorkingQueueToken(DeleteWorkingQueueTokenCommand command);
+    Mono<WorkingQueueToken> extendWorkingQueueTokenTTL(ExtendWorkingQueueTokenTTLCommand command);
 }

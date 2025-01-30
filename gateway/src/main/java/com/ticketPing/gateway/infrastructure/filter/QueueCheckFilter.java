@@ -24,18 +24,45 @@ public class QueueCheckFilter {
     private final QueueCheckService queueCheckService;
 
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+        String path = exchange.getRequest().getURI().getPath();
+        String method = exchange.getRequest().getMethod().name();
+
+        return ApiType.findByRequest(path, method)
+                .doOnSuccess(api -> log.info("API 타입: {}", api))
+                .flatMap(api ->
+                        switch (api) {
+                            case ENTER_WAITING_QUEUE -> handleEnterWaitingQueueApi(exchange, chain);
+                            case GET_QUEUE_INFO -> handleGetQueueInfoApi(exchange, chain);
+                            case PRE_RESERVE_SEAT, CREATE_ORDER, VALIDATE_ORDER -> handleReservationApi(exchange, chain);
+                        })
+                .switchIfEmpty(chain.filter(exchange));
+    }
+
+    private Mono<Void> handleEnterWaitingQueueApi(ServerWebExchange exchange, GatewayFilterChain chain) {
+        return getPerformanceIdFromQueryParams(exchange)
+                .flatMap(performanceId ->
+                        queueCheckService.checkIsPerformanceSoldOut(performanceId)
+                                .then(queueCheckService.checkHasTooManyWaitingUsers(performanceId))
+                                .then(chain.filter(exchange))
+                );
+    }
+
+    private Mono<Void> handleGetQueueInfoApi(ServerWebExchange exchange, GatewayFilterChain chain) {
+        return getPerformanceIdFromQueryParams(exchange)
+                .flatMap(queueCheckService::checkIsPerformanceSoldOut)
+                .then(chain.filter(exchange));
+    }
+
+    private Mono<Void> handleReservationApi(ServerWebExchange exchange, GatewayFilterChain chain) {
         return Mono.zip(
                         getPerformanceIdFromQueryParams(exchange),
                         getUserIdFromAuthentication()
                 )
-                .doOnSuccess(tuple -> log.info("공연 ID: {}, 유저 ID: {}", tuple.getT1(), tuple.getT2()))
-                .flatMap(tuple -> handleApiRequest(exchange, chain, tuple.getT1(), tuple.getT2()));
-    }
-
-    private Mono<String> getUserIdFromAuthentication() {
-        return ReactiveSecurityContextHolder.getContext()
-                .map(context -> context.getAuthentication().getName())
-                .switchIfEmpty(Mono.error(new ApplicationException(USER_ID_NOT_FOUND)));
+                .flatMap(tuple ->
+                        queueCheckService.checkIsPerformanceSoldOut(tuple.getT1())
+                                .then(queueCheckService.checkIsUserAvailable(tuple.getT2(), tuple.getT1()))
+                                .then(chain.filter(exchange))
+                );
     }
 
     private Mono<String> getPerformanceIdFromQueryParams(ServerWebExchange exchange) {
@@ -44,36 +71,10 @@ public class QueueCheckFilter {
                 .orElseGet(() -> Mono.error(new ApplicationException(PERFORMANCE_ID_NOT_FOUND)));
     }
 
-    private Mono<Void> handleApiRequest(ServerWebExchange exchange, GatewayFilterChain chain, String performanceId, String userId) {
-        String path = exchange.getRequest().getURI().getPath();
-        String method = exchange.getRequest().getMethod().name();
-
-        return APIType.findByRequest(path, method)
-                .doOnSuccess(api -> log.info("API 타입: {}", api))
-                .flatMap(api ->
-                        switch (api) {
-                            case ENTER_WAITING_QUEUE -> handleEnterWaitingQueueAPI(exchange, chain, performanceId);
-                            case GET_QUEUE_INFO -> handleGetQueueInfoAPI(exchange, chain, performanceId);
-                            case CREATE_ORDER, REQUEST_PAYMENT -> handleReservationAPI(exchange, chain, userId, performanceId);
-                        })
-                .switchIfEmpty(chain.filter(exchange));
-    }
-
-    private Mono<Void> handleEnterWaitingQueueAPI(ServerWebExchange exchange, GatewayFilterChain chain, String performanceId) {
-        return queueCheckService.checkIsPerformanceSoldOut(performanceId)
-                .then(queueCheckService.checkHasTooManyWaitingUsers(performanceId))
-                .then(chain.filter(exchange));
-    }
-
-    private Mono<Void> handleGetQueueInfoAPI(ServerWebExchange exchange, GatewayFilterChain chain, String performanceId) {
-        return queueCheckService.checkIsPerformanceSoldOut(performanceId)
-                .then(chain.filter(exchange));
-    }
-
-    private Mono<Void> handleReservationAPI(ServerWebExchange exchange, GatewayFilterChain chain, String userId, String performanceId) {
-        return queueCheckService.checkIsPerformanceSoldOut(performanceId)
-                .then(queueCheckService.checkIsUserAvailable(userId, performanceId))
-                .then(chain.filter(exchange));
+    private Mono<String> getUserIdFromAuthentication() {
+        return ReactiveSecurityContextHolder.getContext()
+                .map(context -> context.getAuthentication().getName())
+                .switchIfEmpty(Mono.error(new ApplicationException(USER_ID_NOT_FOUND)));
     }
 
 }

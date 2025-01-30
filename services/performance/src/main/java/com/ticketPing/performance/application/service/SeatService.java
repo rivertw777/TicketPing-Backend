@@ -1,85 +1,103 @@
 package com.ticketPing.performance.application.service;
 
-import caching.repository.RedisRepository;
-import com.ticketPing.performance.application.dtos.OrderInfoResponse;
-import com.ticketPing.performance.application.dtos.SeatResponse;
+import com.ticketPing.performance.application.dtos.OrderSeatResponse;
+import com.ticketPing.performance.common.exception.SeatExceptionCase;
 import com.ticketPing.performance.domain.model.entity.Schedule;
 import com.ticketPing.performance.domain.model.entity.Seat;
+import com.ticketPing.performance.domain.model.entity.SeatCache;
+import com.ticketPing.performance.domain.model.enums.SeatStatus;
+import com.ticketPing.performance.domain.repository.CacheRepository;
 import com.ticketPing.performance.domain.repository.SeatRepository;
-import com.ticketPing.performance.common.exception.SeatExceptionCase;
 import exception.ApplicationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
-import static caching.enums.RedisKeyPrefix.AVAILABLE_SEATS;
-import static caching.enums.RedisKeyPrefix.SEAT_CACHE;
+import static com.ticketPing.performance.common.constants.SeatConstants.PRE_RESERVE_TTL;
 
 @Service
 @RequiredArgsConstructor
 public class SeatService {
+
     private final SeatRepository seatRepository;
-    private final RedisRepository redisRepository;  // TODO: 상위 서비스 만들어서 불러오기
+    private final CacheRepository cacheRepository;
 
-    @Transactional(readOnly = true)
-    public SeatResponse getSeat(UUID id) {
-        Seat seat = findSeatByIdJoinSeatCost(id);
-        return SeatResponse.of(seat);
+    public void preReserveSeat(UUID scheduleId, UUID seatId, UUID userId) {
+        cacheRepository.preReserveSeatCache(scheduleId, seatId, userId);
+    }
+
+    public void cancelPreReserveSeat(UUID scheduleId, UUID seatId, UUID userId) {
+        validatePreserve(scheduleId, seatId, userId);
+        cacheRepository.deletePreReserveTTL(scheduleId, seatId);
+        cancelPreReserveSeatInCache(scheduleId, seatId);
+    }
+
+    public void cancelPreReserveSeatInCache(UUID scheduleId, UUID seatId) {
+        SeatCache seatCache = cacheRepository.getSeatCache(scheduleId, seatId);
+        seatCache.cancelPreReserveSeat();
+        cacheRepository.putSeatCache(seatCache, scheduleId, seatId);
     }
 
     @Transactional
-    public SeatResponse updateSeatState(UUID seatId, Boolean seatState) {
-        Seat seat = findSeatByIdJoinSeatCost(seatId);
-        seat.updateSeatState(seatState);
-        return SeatResponse.of(seat);
+    public void reserveSeat(String scheduleId, String seatId) {
+        reserveSeatInDB(seatId);
+        reserveSeatInCache(UUID.fromString(scheduleId), UUID.fromString(seatId));
     }
 
-    @Transactional
-    public Seat findSeatByIdJoinSeatCost(UUID id) {
-        return seatRepository.findByIdJoinSeatCost(id)
+    public OrderSeatResponse getOrderSeatInfo(UUID scheduleId, UUID seatId, UUID userId) {
+        validatePreserve(scheduleId, seatId, userId);
+        Seat seat = getSeatWithDetails(seatId);
+        extendPreReserveTTL(scheduleId, seatId);
+        return OrderSeatResponse.of(seat);
+    }
+
+    public void extendPreReserveTTL(UUID scheduleId, UUID seatId) {
+        cacheRepository.extendPreReserveTTL(scheduleId, seatId, Duration.ofSeconds(PRE_RESERVE_TTL));
+    }
+
+    public long cacheSeatsForSchedule(Schedule schedule) {
+        List<Seat> seats = seatRepository.findByScheduleWithSeatCost(schedule);
+
+        Map<String, SeatCache> seatMap = seats.stream().collect(Collectors.toMap(seat -> seat.getId().toString(), SeatCache::from));
+
+        LocalDateTime expiration = schedule.getStartDate().atTime(23, 59, 59);
+        Duration ttl = Duration.between(LocalDateTime.now(), expiration);
+
+        cacheRepository.cacheSeats(schedule.getId(), seatMap, ttl);
+
+        return seats.stream().filter(seat -> seat.getSeatStatus() == SeatStatus.AVAILABLE).count();
+    }
+
+    private Seat getSeatWithDetails(UUID seatId) {
+        return seatRepository.findByIdWithAll(seatId)
                 .orElseThrow(() -> new ApplicationException(SeatExceptionCase.SEAT_NOT_FOUND));
     }
 
-    @Transactional
-    public OrderInfoResponse getOrderInfo(UUID seatId) {
-        Seat seat = seatRepository.findByIdJoinAll(seatId)
-                .orElseThrow(() -> new ApplicationException(SeatExceptionCase.SEAT_NOT_FOUND));
-        return OrderInfoResponse.of(seat);
+    private void reserveSeatInDB(String seatId) {
+        Seat seat = seatRepository.findById(UUID.fromString(seatId))
+                .orElseThrow(() ->  new ApplicationException(SeatExceptionCase.SEAT_NOT_FOUND));
+        seat.reserveSeat();
     }
 
-    @Transactional
-    public List<SeatResponse> getAllScheduleSeats(UUID scheduleId) {
-        Set<String> ids = redisRepository.getKeys(SEAT_CACHE.getValue() + scheduleId + ":*");
-        if(ids.isEmpty()) {
-            throw new ApplicationException(SeatExceptionCase.SEAT_CACHE_NOT_FOUND);
-        }
-        return redisRepository.getValuesAsClass(ids.stream().toList(), SeatResponse.class);
+    private void validatePreserve(UUID scheduleId, UUID seatId, UUID userId) {
+        String preReserveUserId = cacheRepository.getPreReserveUserId(scheduleId, seatId);
+        if(!preReserveUserId.equals(userId.toString()))
+            throw new ApplicationException(SeatExceptionCase.USER_NOT_MATCH);
     }
 
-    @Transactional
-    public void createSeatsCache(List<Schedule> schedules, UUID performanceId) {
-        long availableSeats = 0;
-
-        for(Schedule schedule : schedules) {
-            List<Seat> seats = findSeatsByScheduleJoinSeatCost(schedule);
-
-            availableSeats += seats.stream().filter(s -> !s.getSeatState()).count();
-
-            // 좌석 캐싱
-            String prefix = SEAT_CACHE.getValue() + schedule.getId() + ":";
-            Map<String, Object> seatMap = new HashMap<>();
-            seats.forEach(seat -> {seatMap.put(prefix+seat.getId(), SeatResponse.of(seat));});
-            redisRepository.setValues(seatMap);
-        }
-
-        // counter 생성
-        redisRepository.setValue(AVAILABLE_SEATS.getValue() + performanceId, availableSeats);
-    }
-
-    @Transactional
-    public List<Seat> findSeatsByScheduleJoinSeatCost(Schedule schedule) {
-        return seatRepository.findByScheduleJoinSeatCost(schedule);
+    private void reserveSeatInCache(UUID scheduleId, UUID seatId) {
+        cacheRepository.deletePreReserveTTL(scheduleId, seatId);
+        SeatCache seatCache = cacheRepository.getSeatCache(scheduleId, seatId);
+        seatCache.reserveSeat();
+        cacheRepository.putSeatCache(seatCache, scheduleId, seatId);
     }
 }
+
+

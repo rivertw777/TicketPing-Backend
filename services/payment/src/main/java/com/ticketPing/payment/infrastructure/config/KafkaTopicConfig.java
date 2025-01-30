@@ -10,14 +10,6 @@ import org.springframework.kafka.config.TopicBuilder;
 public class KafkaTopicConfig {
 
     @Bean
-    public NewTopic paymentCreatedTopic() {
-        return TopicBuilder.name(PaymentTopic.CREATED.getTopic())
-                .partitions(3)
-                .replicas(3)
-                .build();
-    }
-
-    @Bean
     public NewTopic paymentCompletedTopic() {
         return TopicBuilder.name(PaymentTopic.COMPLETED.getTopic())
                 .partitions(3)

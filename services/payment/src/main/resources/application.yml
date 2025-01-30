@@ -17,3 +17,8 @@ spring:
 
 server:
   port: 10014
+
+toss:
+  payment:
+    widget-secret-key: ${TOSS_PAYMENT_WIDGET_SECRET_KEY}
+    payment-confirm-url: ${TOSS_PAYMENT_CONFIRM_URL}

@@ -1,7 +1,6 @@
 package com.ticketPing.performance.domain.model.entity;
 
 import audit.BaseEntity;
-import com.ticketPing.performance.domain.model.enums.SeatRate;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -28,18 +27,16 @@ public class SeatCost extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "seat_cost_id")
     private UUID id;
-
-    @Enumerated(EnumType.STRING)
-    private SeatRate seatRate;
+    private String seatGrade;
     private Integer cost;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "performance_id", nullable = false)
     private Performance performance;
 
-    public static SeatCost createTestData(SeatRate seatRate, Integer cost, Performance performance) {
+    public static SeatCost createTestData(String seatGrade, Integer cost, Performance performance) {
         return SeatCost.builder()
-                .seatRate(seatRate)
+                .seatGrade(seatGrade)
                 .cost(cost)
                 .performance(performance)
                 .build();

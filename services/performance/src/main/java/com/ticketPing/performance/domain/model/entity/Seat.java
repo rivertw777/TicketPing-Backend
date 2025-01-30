@@ -1,5 +1,6 @@
 package com.ticketPing.performance.domain.model.entity;
 
+import com.ticketPing.performance.domain.model.enums.SeatStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,7 +19,7 @@ public class Seat {
     private UUID id;
     private Integer row;
     private Integer col;
-    private Boolean seatState;
+    private SeatStatus seatStatus;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seat_cost_id")
@@ -28,17 +29,17 @@ public class Seat {
     @JoinColumn(name = "schedule_id")
     private Schedule schedule;
 
-    public static Seat createTestData(Integer row, Integer col, Boolean seatSate, SeatCost seatCosts, Schedule schedule) {
+    public static Seat createTestData(Integer row, Integer col, SeatStatus seatStatus, SeatCost seatCosts, Schedule schedule) {
         return Seat.builder()
                 .row(row)
                 .col(col)
-                .seatState(seatSate)
+                .seatStatus(seatStatus)
                 .seatCost(seatCosts)
                 .schedule(schedule)
                 .build();
     }
 
-    public void updateSeatState(Boolean seatState) {
-        this.seatState = seatState;
+    public void reserveSeat() {
+        this.seatStatus = SeatStatus.RESERVED;
     }
 }

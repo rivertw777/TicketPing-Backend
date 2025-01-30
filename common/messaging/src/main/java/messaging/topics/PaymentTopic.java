@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum PaymentTopic {
 
-    CREATED("payment-created"),
     COMPLETED("payment-completed");
 
     private final String topic;

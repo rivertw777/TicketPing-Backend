@@ -9,7 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Where;
+import performance.OrderSeatResponse;
 
 
 @Getter
@@ -17,7 +17,6 @@ import org.hibernate.annotations.Where;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder(access = AccessLevel.PRIVATE)
 @Table(name = "p_order_seats")
-@Where(clause = "is_deleted = false")
 @Entity
 public class OrderSeat extends BaseEntity {
     @Id
@@ -27,20 +26,22 @@ public class OrderSeat extends BaseEntity {
     private UUID seatId;
     private int row;
     private int col;
-    private String seatRate;
+    private String seatGrade;
     private int cost;
 
-    @OneToOne(mappedBy = "orderSeat")
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "performance_id", nullable = false)
     private Order order;
 
-    public static OrderSeat create(UUID seatId, int row, int col, String seatRate, int cost) {
+    public static OrderSeat from(OrderSeatResponse orderData, Order order) {
         return OrderSeat.builder()
-            .seatId(seatId)
-            .col(col)
-            .seatRate(seatRate)
-            .cost(cost)
-            .row(row)
-            .build();
+                .seatId(orderData.seatId())
+                .row(orderData.row())
+                .col(orderData.col())
+                .seatGrade(orderData.seatGrade())
+                .cost(orderData.cost())
+                .order(order)
+                .build();
     }
 
 }

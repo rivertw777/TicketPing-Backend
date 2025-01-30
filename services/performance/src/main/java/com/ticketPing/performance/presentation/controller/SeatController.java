@@ -1,7 +1,5 @@
 package com.ticketPing.performance.presentation.controller;
 
-import com.ticketPing.performance.application.dtos.OrderInfoResponse;
-import com.ticketPing.performance.application.dtos.SeatResponse;
 import com.ticketPing.performance.application.service.SeatService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -17,31 +15,27 @@ import java.util.UUID;
 public class SeatController {
     private final SeatService seatService;
 
-    @Operation(summary = "좌석 정보 조회")
-    @GetMapping("/{seatId}")
-    public ResponseEntity<CommonResponse<SeatResponse>> getSeat(@PathVariable("seatId") UUID seatId) {
-        SeatResponse seatResponse = seatService.getSeat(seatId);
+    @Operation(summary = "좌석 선점")
+    @PostMapping("/{seatId}/pre-reserve")
+    public ResponseEntity<CommonResponse<Object>> preReserveSeat(@RequestHeader("X_USER_ID") UUID userId,
+                                                                 @PathVariable("seatId") UUID seatId,
+                                                                 @RequestParam("performanceId") UUID performanceId,
+                                                                 @RequestParam("scheduleId") UUID scheduleId) {
+        seatService.preReserveSeat(scheduleId, seatId, userId);
         return ResponseEntity
                 .status(200)
-                .body(CommonResponse.success(seatResponse));
+                .body(CommonResponse.success());
     }
 
-    @Operation(summary = "좌석 주문 정보 조회 (order 서비스에서 호출용)")
-    @GetMapping("/{seatId}/order-info")
-    public ResponseEntity<CommonResponse<OrderInfoResponse>> getOrderInfo(@PathVariable("seatId") UUID seatId) {
-        OrderInfoResponse orderInfoResponse = seatService.getOrderInfo(seatId);
+    @Operation(summary = "좌석 선점 취소")
+    @PostMapping("/{seatId}/cancel-reserve")
+    public ResponseEntity<CommonResponse<Object>> cancelPreReserveSeat(@RequestHeader("X_USER_ID") UUID userId,
+                                                                       @PathVariable("seatId") UUID seatId,
+                                                                       @RequestParam("performanceId") UUID performanceId,
+                                                                       @RequestParam("scheduleId") UUID scheduleId) {
+        seatService.cancelPreReserveSeat(scheduleId, seatId, userId);
         return ResponseEntity
                 .status(200)
-                .body(CommonResponse.success(orderInfoResponse));
-    }
-
-    @Operation(summary = "좌석 상태 수정 (order 서비스에서 호출용)")
-    @PutMapping("/{seatId}")
-    public ResponseEntity<CommonResponse<SeatResponse>> updateSeatState(@PathVariable("seatId") UUID seatId,
-                                                                        @RequestParam("seatState") Boolean seatState) {
-        SeatResponse seatResponse = seatService.updateSeatState(seatId, seatState);
-        return ResponseEntity
-                .status(200)
-                .body(CommonResponse.success(seatResponse));
+                .body(CommonResponse.success());
     }
 }

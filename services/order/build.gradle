@@ -38,9 +38,9 @@ dependencies {
 	implementation project(':common:core')
 	implementation project(':common:dtos')
 	implementation project(':common:rdb')
-	implementation project(':common:caching')
 	implementation project(':common:messaging')
 	implementation project(':common:monitoring')
+	implementation project(':common:circuit-breaker')
 
 	// MVC
 	implementation 'org.springframework.boot:spring-boot-starter-web'

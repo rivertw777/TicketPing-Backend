@@ -5,6 +5,7 @@ import static com.ticketPing.queue_manage.common.exception.QueueErrorCase.WORKIN
 import com.ticketPing.queue_manage.application.dto.GeneralQueueTokenResponse;
 import com.ticketPing.queue_manage.domain.command.waitingQueue.DeleteFirstWaitingQueueTokenCommand;
 import com.ticketPing.queue_manage.domain.command.workingQueue.DeleteWorkingQueueTokenCommand;
+import com.ticketPing.queue_manage.domain.command.workingQueue.ExtendWorkingQueueTokenTTLCommand;
 import com.ticketPing.queue_manage.domain.command.workingQueue.FindWorkingQueueTokenCommand;
 import com.ticketPing.queue_manage.domain.command.workingQueue.InsertWorkingQueueTokenCommand;
 import com.ticketPing.queue_manage.domain.model.WaitingQueueToken;
@@ -58,6 +59,15 @@ public class WorkingQueueService {
 
         return workingQueueRepository.insertWorkingQueueToken(command)
                 .doOnSuccess(isWorkingQueueTokenSaved -> log.info("작업열 토큰 저장 완료 {}", isWorkingQueueTokenSaved));
+    }
+
+    public Mono<GeneralQueueTokenResponse> extendWorkingQueueTokenTTL(String userId, String performanceId) {
+        val command = ExtendWorkingQueueTokenTTLCommand.create(userId, performanceId);
+
+        return workingQueueRepository.extendWorkingQueueTokenTTL(command)
+                .doOnSuccess(token -> log.info("작업열 토큰 TTL 연장 완료 {}", token))
+                .map(GeneralQueueTokenResponse::from)
+                .switchIfEmpty(Mono.error(new ApplicationException(WORKING_QUEUE_TOKEN_NOT_FOUND)));
     }
 
 }

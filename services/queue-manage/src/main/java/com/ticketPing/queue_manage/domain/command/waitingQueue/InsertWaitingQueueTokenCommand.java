@@ -2,9 +2,9 @@ package com.ticketPing.queue_manage.domain.command.waitingQueue;
 
 import static caching.enums.RedisKeyPrefix.WAITING_QUEUE;
 import static caching.enums.RedisKeyPrefix.WORKING_QUEUE;
+import static com.ticketPing.queue_manage.common.utils.ConfigHolder.initialWorkingQueueTokenTTL;
 import static com.ticketPing.queue_manage.common.utils.TokenValueGenerator.generateTokenValue;
 import static com.ticketPing.queue_manage.common.utils.ConfigHolder.workingQueueMaxSize;
-import static com.ticketPing.queue_manage.common.utils.ConfigHolder.workingQueueTokenTTL;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -42,7 +42,7 @@ public class InsertWaitingQueueTokenCommand {
                 .enterTime(System.currentTimeMillis() / 1000.0)
                 .workingQueueName(WORKING_QUEUE.getValue() + performanceId)
                 .cacheValue("NA")
-                .ttlInMinutes(workingQueueTokenTTL())
+                .ttlInMinutes(initialWorkingQueueTokenTTL())
                 .workingQueueMaxSlots(workingQueueMaxSize())
                 .build();
     }

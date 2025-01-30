@@ -1,9 +1,7 @@
 package com.ticketPing.performance.presentation.controller;
 
-import com.ticketPing.performance.application.dtos.ScheduleResponse;
 import com.ticketPing.performance.application.dtos.SeatResponse;
 import com.ticketPing.performance.application.service.ScheduleService;
-import com.ticketPing.performance.application.service.SeatService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -21,21 +19,11 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ScheduleController {
     private final ScheduleService scheduleService;
-    private final SeatService seatService;
-
-    @Operation(summary = "스케줄 조회")
-    @GetMapping("/{scheduleId}")
-    public ResponseEntity<CommonResponse<ScheduleResponse>> getSchedule(@PathVariable("scheduleId") UUID scheduleId) {
-        ScheduleResponse scheduleResponse = scheduleService.getSchedule(scheduleId);
-        return ResponseEntity
-                .status(200)
-                .body(CommonResponse.success(scheduleResponse));
-    }
 
     @Operation(summary = "스케줄 전체 좌석 조회")
     @GetMapping("/{scheduleId}/seats")
     public ResponseEntity<CommonResponse<List<SeatResponse>>> getAllScheduleSeats(@PathVariable("scheduleId") UUID scheduleId) {
-        List<SeatResponse> seatResponses = seatService.getAllScheduleSeats(scheduleId);
+        List<SeatResponse> seatResponses = scheduleService.getAllScheduleSeats(scheduleId);
         return ResponseEntity
                 .status(200)
                 .body(CommonResponse.success(seatResponses));

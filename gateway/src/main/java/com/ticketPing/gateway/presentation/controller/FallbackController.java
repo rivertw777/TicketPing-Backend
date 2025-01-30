@@ -27,7 +27,7 @@ public class FallbackController {
 
     private ResponseEntity<CommonResponse<Object>> handleCircuitBreakerException(Throwable ex) {
         if (ex instanceof TimeoutException) {
-            return createServiceUnavailableResponse(CircuitBreakerErrorCase.SERVICE_UNAVAILABLE);
+            return createServiceUnavailableResponse(CircuitBreakerErrorCase.CONNECTION_TIMEOUT);
         } else if (ex instanceof CallNotPermittedException) {
             return createServiceUnavailableResponse(CircuitBreakerErrorCase.SERVICE_IS_OPEN);
         } else {

@@ -2,7 +2,6 @@ package com.ticketPing.payment.application.service;
 
 import messaging.events.PaymentCompletedEvent;
 import lombok.RequiredArgsConstructor;
-import messaging.events.PaymentCreatedEvent;
 import messaging.utils.EventSerializer;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
@@ -13,11 +12,6 @@ import messaging.topics.PaymentTopic;
 public class EventApplicationService {
 
     private final KafkaTemplate<String, String> kafkaTemplate;
-
-    public void publishPaymentCreatedEvent(PaymentCreatedEvent event) {
-        String message = EventSerializer.serialize(event);
-        kafkaTemplate.send(PaymentTopic.CREATED.getTopic(), message);
-    }
 
     public void publishPaymentCompletedEvent(PaymentCompletedEvent event) {
         String message = EventSerializer.serialize(event);

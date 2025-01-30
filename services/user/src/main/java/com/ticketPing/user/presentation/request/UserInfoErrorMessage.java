@@ -5,6 +5,4 @@ public class UserInfoErrorMessage {
     public static final String INVALID_EMAIL = "이메일 형식이 올바르지 않습니다.";
     public static final String PASSWORD_REQUIRED = "비밀번호를 입력해주세요.";
     public static final String NICKNAME_REQUIRED = "닉네임을 입력해주세요.";
-    public static final String BIRTHDAY_REQUIRED = "생일을 입력해주세요.";
-    public static final String GENDER_REQUIRED = "성별을 입력해주세요.";
 }

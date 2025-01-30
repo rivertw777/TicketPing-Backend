@@ -7,7 +7,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum OrderTopic {
 
-    COMPLETED("order-completed");
+    COMPLETED_FOR_SEAT_RESERVATION("order-completed-for-seat-reservation"),
+    COMPLETED_FOR_QUEUE_TOKEN_REMOVAL("order-completed-for-queue-token-removal"),
+    FAILED("order-failed");
 
     private final String topic;
 

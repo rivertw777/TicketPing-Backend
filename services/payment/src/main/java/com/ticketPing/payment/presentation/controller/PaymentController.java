@@ -4,7 +4,9 @@ import static response.CommonResponse.success;
 
 import com.ticketPing.payment.application.dto.PaymentResponse;
 import com.ticketPing.payment.application.service.PaymentApplicationService;
+import com.ticketPing.payment.presentation.request.PaymentConfirmRequest;
 import jakarta.validation.Valid;
+import org.json.simple.JSONObject;
 import response.CommonResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import java.util.UUID;
@@ -19,33 +21,31 @@ public class PaymentController {
 
     private final PaymentApplicationService paymentApplicationService;
 
-    @Operation(summary = "PG사 결제 요청")
-    @PostMapping
-    public ResponseEntity<CommonResponse<PaymentResponse>> requestPayment(
-            @Valid @RequestHeader("X-USER-ID") UUID userId,
-            @Valid @RequestParam("performanceId") UUID performanceId,
-            @Valid @RequestParam("orderId") UUID orderId) {
-        return ResponseEntity
-                .status(201)
-                .body(success(paymentApplicationService.requestPayment(userId, orderId)));
-    }
-
-    @Operation(summary = "PG사 결제 상태 확인")
-    @GetMapping("/{paymentId}/status")
-    public ResponseEntity<CommonResponse<PaymentResponse>> checkPaymentStatus(
-            @Valid @PathVariable("paymentId") UUID paymentId) {
+    @Operation(summary = "TOSS 결제 상태 확인")
+    @PostMapping("/confirm")
+    public ResponseEntity<CommonResponse<JSONObject>> confirmPayment(@Valid @RequestHeader("X_USER_ID") UUID userId,
+                                                                     @Valid @RequestBody PaymentConfirmRequest request) {
         return ResponseEntity
                 .status(200)
-                .body(success(paymentApplicationService.checkPaymentStatus(paymentId)));
+                .body(success(paymentApplicationService.confirmPayment(userId, request)));
     }
 
     @Operation(summary = "결제 단일 조회 (Feign)")
     @GetMapping("/{paymentId}")
-    public ResponseEntity<CommonResponse<PaymentResponse>> getPayment(
+    public ResponseEntity<CommonResponse<PaymentResponse>> getPaymentInfo(
             @Valid @PathVariable("paymentId") UUID paymentId) {
         return ResponseEntity
                 .status(200)
                 .body(success(paymentApplicationService.getPayment(paymentId)));
+    }
+
+    @Operation(summary = "결제 성공 확인 (Feign)")
+    @GetMapping("/completed")
+    public ResponseEntity<CommonResponse<PaymentResponse>> getCompletedPaymentByOrderId(
+            @Valid @RequestParam("orderId") UUID orderId) {
+        return ResponseEntity
+                .status(200)
+                .body(success(paymentApplicationService.getCompletedPaymentByOrderId(orderId)));
     }
 
 }

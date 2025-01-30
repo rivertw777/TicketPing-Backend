@@ -24,9 +24,6 @@ public class PerformanceHall extends BaseEntity {
     private Integer rows;
     private Integer columns;
 
-    @OneToMany(mappedBy = "performanceHall", fetch = FetchType.LAZY)
-    private List<Schedule> performanceSchedules;
-
     public static PerformanceHall createTestData(String name, String address, Integer seatNumber,
                                                  Integer rows, Integer columns) {
         return PerformanceHall.builder()

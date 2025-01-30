@@ -20,7 +20,7 @@ public class GlobalExceptionHandler {
     private final ObjectMapper objectMapper;
 
     @ExceptionHandler(ApplicationException.class)
-    public ResponseEntity<CommonResponse> handleDnaApplicationException(ApplicationException e) {
+    public ResponseEntity<CommonResponse> handleApplicationException(ApplicationException e) {
         CommonResponse response = CommonResponse.error(e.getExceptionCase());
         return ResponseEntity
             .status(response.getStatus())

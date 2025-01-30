@@ -1,12 +1,12 @@
 apiVersion: 1
 groups:
   - orgId: 1
-    name: TicketPing
+    name: TicketPing-CPU
     folder: TicketPing
     interval: 1m
     rules:
       - uid: de31h1522x1j4c
-        title: Gateway CPU Usage Over 50%
+        title: CPU Usage Over 80%
         condition: C
         data:
           - refId: A
@@ -36,7 +36,7 @@ groups:
               conditions:
                 - evaluator:
                     params:
-                      - 0.5
+                      - 0.8
                     type: gt
                   operator:
                     type: and
@@ -57,16 +57,143 @@ groups:
               type: threshold
         dashboardUid: ""
         panelId: 0
-        noDataState: Alerting
+        noDataState: OK
         execErrState: Alerting
-        for: 1m
+        for: 0s
         annotations: {}
         labels: {}
         isPaused: false
         notification_settings:
           receiver: TicketPing-Discord
   - orgId: 1
-    name: CircuitBreaker Open or Half_Open for 5m
+    name: TicketPing-CPU
+    folder: TicketPing
+    interval: 1m
+    rules:
+      - uid: ee8sedq6voge8c
+        title: CPU Usage Over 50% in 1m
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: PBFA97CFB590B2093
+            model:
+              disableTextWrap: false
+              editorMode: builder
+              expr: avg_over_time(system_cpu_usage{instance="host.docker.internal:10001"}[1m])
+              fullMetaSearch: false
+              includeNullMetadata: true
+              instant: true
+              intervalMs: 1000
+              legendFormat: __auto
+              maxDataPoints: 43200
+              range: false
+              refId: A
+              useBackend: false
+          - refId: C
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params:
+                      - 0.5
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - C
+                  reducer:
+                    params: [ ]
+                    type: last
+                  type: query
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: A
+              intervalMs: 1000
+              maxDataPoints: 43200
+              refId: C
+              type: threshold
+        noDataState: OK
+        execErrState: Error
+        for: 1m
+        annotations: { }
+        labels: { }
+        isPaused: false
+        notification_settings:
+          receiver: TicketPing-Discord
+  - orgId: 1
+    name: CircuitBreaker
+    folder: TicketPing
+    interval: 1m
+    rules:
+      - uid: ae8shaqrswcn4a
+        title: CircuitBreaker Open
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: PBFA97CFB590B2093
+            model:
+              disableTextWrap: false
+              editorMode: builder
+              expr: sum by(name, instance) (resilience4j_circuitbreaker_state{state=~"open|half_open"})
+              fullMetaSearch: false
+              includeNullMetadata: true
+              instant: true
+              intervalMs: 1000
+              legendFormat: __auto
+              maxDataPoints: 43200
+              range: false
+              refId: A
+              useBackend: false
+          - refId: C
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params:
+                      - 0.99
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - C
+                  reducer:
+                    params: [ ]
+                    type: last
+                  type: query
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: A
+              intervalMs: 1000
+              maxDataPoints: 43200
+              refId: C
+              type: threshold
+        noDataState: OK
+        execErrState: Error
+        for: 0s
+        annotations:
+          description: CircuitBreaker ''{{ $labels.instance }}'' ''{{ $labels.name }}'' has change from CLOSED to OPEN.
+        labels: { }
+        isPaused: false
+        notification_settings:
+          receiver: TicketPing-Discord
+  - orgId: 1
+    name: CircuitBreaker
     folder: TicketPing
     interval: 1m
     rules:
@@ -83,7 +210,7 @@ groups:
               disableTextWrap: false
               editorMode: builder
               exemplar: false
-              expr: sum by(name) (avg_over_time(resilience4j_circuitbreaker_state{state=~"open|half_open"}[5m]))
+              expr: sum by(name, instance) (avg_over_time(resilience4j_circuitbreaker_state{state=~"open|half_open"}[5m]))
               fullMetaSearch: false
               includeNullMetadata: true
               instant: true
@@ -125,7 +252,7 @@ groups:
         execErrState: Error
         for: 1m
         annotations:
-          description: '"CircuitBreaker ''{{ $labels.name }}'' has been in an OPEN or HALF_OPEN state for 5 minutes."'
+          description: 'CircuitBreaker ''{{ $labels.instance }}'' ''{{ $labels.name }}'' has been in an OPEN or HALF_OPEN state for 5 minutes.'
         labels: {}
         isPaused: false
         notification_settings:

@@ -7,6 +7,7 @@ spring:
       - "classpath:application-eureka.yml"
       - "classpath:application-redis.yml"
       - "classpath:application-monitoring.yml"
+      - "classpath:application-circuit-breaker.yml"
 
 server:
   port: 10010
@@ -17,3 +18,9 @@ jwt:
     expiration: 1800000  # 30분
   refreshToken:
     expiration: 604800000  # 7일
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      userServiceCircuitBreaker:
+        baseConfig: default

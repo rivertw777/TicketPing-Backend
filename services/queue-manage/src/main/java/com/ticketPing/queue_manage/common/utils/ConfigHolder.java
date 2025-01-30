@@ -11,7 +11,8 @@ public class ConfigHolder {
 
     private static String tokenValueSecretKey;
     private static int workingQueueMaxSize;
-    private static int workingQueueTokenTTL;
+    private static int initialWorkingQueueTokenTTL;
+    private static int extendedWorkingQueueTokenTTL;
 
     @Value("${token-value.secret-key}")
     public void setSecretKey(String secretKey) {
@@ -23,9 +24,14 @@ public class ConfigHolder {
         workingQueueMaxSize = maxSize;
     }
 
-    @Value("${working-queue.token-ttl}")
-    public void setWorkingQueueTokenTTL(int tokenTTL) {
-        workingQueueTokenTTL = tokenTTL;
+    @Value("${working-queue.initial-token-ttl}")
+    public void setInitialWorkingQueueTokenTTL(int tokenTTL) {
+        initialWorkingQueueTokenTTL = tokenTTL;
+    }
+
+    @Value("${working-queue.extended-token-ttl}")
+    public void setExtendedWorkingQueueTokenTTL(int tokenTTL) {
+        extendedWorkingQueueTokenTTL = tokenTTL;
     }
 
     public static String tokenValueSecretKey() {
@@ -36,8 +42,10 @@ public class ConfigHolder {
         return workingQueueMaxSize;
     }
 
-    public static int workingQueueTokenTTL() {
-        return workingQueueTokenTTL;
+    public static int initialWorkingQueueTokenTTL() {
+        return initialWorkingQueueTokenTTL;
     }
+
+    public static int extendedWorkingQueueTokenTTL() { return extendedWorkingQueueTokenTTL; }
 
 }

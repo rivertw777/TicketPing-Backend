@@ -8,7 +8,7 @@ spring:
         cors-configurations:
           '[/**]':
             allow-credentials: true
-            allowed-origins: ${FRONTEND_APP_URL}
+            allowed-origins: ${client.url}
             allowed-headers: "*"
             allowed-methods:
               - PUT
@@ -26,10 +26,17 @@ spring:
 server:
   port: 10001
 
+client:
+  url: ${FRONTEND_APP_URL}
+
 token-value:
   secret-key: ${USER_TOKEN_SECRET_KEY}
 
 resilience4j:
+  timelimiter:
+    configs:
+      default:
+        timeout-duration: 15s
   circuitbreaker:
     configs:
       default:
@@ -47,8 +54,6 @@ resilience4j:
           - org.springframework.cloud.gateway.support.NotFoundException
           - io.netty.channel.AbstractChannel$AnnotatedConnectException
     instances:
-      authServiceCircuitBreaker:
-        baseConfig: default
       userServiceCircuitBreaker:
         baseConfig: default
       performanceServiceCircuitBreaker:
@@ -57,5 +62,16 @@ resilience4j:
         baseConfig: default
       paymentServiceCircuitBreaker:
         baseConfig: default
-      queueManageCircuitBreaker:
+      queueManageServiceCircuitBreaker:
         baseConfig: default
+      authServiceCircuitBreaker:
+        baseConfig: default
+        record-exceptions:
+          - java.util.concurrent.TimeoutException
+          - org.springframework.cloud.gateway.support.NotFoundException
+          - io.netty.channel.AbstractChannel$AnnotatedConnectException
+          - org.springframework.web.reactive.function.client.WebClientRequestException
+          - org.springframework.web.reactive.function.client.WebClientResponseException.BadGateway
+          - org.springframework.web.reactive.function.client.WebClientResponseException.GatewayTimeout
+          - org.springframework.web.reactive.function.client.WebClientResponseException.TooManyRequests
+          - org.springframework.web.reactive.function.client.WebClientResponseException.ServiceUnavailable

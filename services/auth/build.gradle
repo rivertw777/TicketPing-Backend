@@ -39,9 +39,11 @@ dependencies {
 	implementation project(':common:dtos')
 	implementation project(':common:caching')
 	implementation project(':common:monitoring')
+	implementation project(':common:circuit-breaker')
 
 	// MVC
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
 
 	// Cloud
 	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'

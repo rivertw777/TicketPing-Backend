@@ -1,6 +1,7 @@
 package com.ticketPing.payment.infrastructure.repository;
 
 import com.ticketPing.payment.domain.model.entity.Payment;
+import com.ticketPing.payment.domain.model.enums.PaymentStatus;
 import com.ticketPing.payment.domain.repository.PaymentRepository;
 import java.util.Optional;
 import java.util.UUID;
@@ -21,6 +22,11 @@ public class PaymentRepositoryImpl implements PaymentRepository {
     @Override
     public Optional<Payment> findById(UUID paymentId) {
         return paymentJpaRepository.findById(paymentId);
+    }
+
+    @Override
+    public Optional<Payment> findByOrderIdAndStatus(UUID orderId, PaymentStatus status) {
+        return paymentJpaRepository.findByOrderIdAndStatus(orderId, status);
     }
 
 }

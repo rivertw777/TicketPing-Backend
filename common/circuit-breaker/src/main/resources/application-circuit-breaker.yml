@@ -1,0 +1,29 @@
+spring:
+  cloud:
+    openfeign:
+      circuitbreaker: enabled
+
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        registerHealthIndicator: true
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 10
+        failureRateThreshold: 50
+        slowCallRateThreshold: 100
+        slowCallDurationThreshold: 10s
+        waitDurationInOpenState: 10s
+        permittedNumberOfCallsInHalfOpenState: 3
+        recordSlowCalls: true
+        record-exceptions:
+          - java.util.concurrent.TimeoutException
+          - java.net.SocketTimeoutException
+          - java.net.UnknownHostException
+          - java.net.ConnectException
+          - feign.RetryableException
+          - feign.FeignException.GatewayTimeout
+          - feign.FeignException.BadGateway
+          - feign.FeignException.TooManyRequests
+          - feign.FeignException.ServiceUnavailable

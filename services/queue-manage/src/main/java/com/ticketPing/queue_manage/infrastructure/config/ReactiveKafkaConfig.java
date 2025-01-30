@@ -39,7 +39,7 @@ public class ReactiveKafkaConfig {
         props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
 
         // 토픽 할당
-        List<String> topics = Arrays.asList(OrderTopic.COMPLETED.getTopic());
+        List<String> topics = Arrays.asList(OrderTopic.COMPLETED_FOR_QUEUE_TOKEN_REMOVAL.getTopic());
 
         return ReceiverOptions.<String, String>create(props)
                 .subscription(topics)

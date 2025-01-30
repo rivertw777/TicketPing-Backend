@@ -15,11 +15,25 @@
 
 <br>
 
+### 대기열 화면
+<br>
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/4f73176c-d9e3-4965-bf35-ba08869a1647" alt="대기열 화면">
+</p>
+<br>
+
+### 예매 화면
+<br>
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/c04aca0d-089d-4327-a59e-42064b45b2c9" alt="예매 화면" style="width: 700px; height: auto;">
+</p>
+<br>
+
 ## 🎯 프로젝트 목표
 
 - **MSA**: 특정 서비스에 대한 부하가 증가할 때 해당 서비스만 독립적으로 스케일 아웃할 수 있는 MSA 적용
 
-- **느슨한 결합**: 메시지 큐를 활용한 비동기 처리로 각 서비스 간의 의존성을 최소화
+- **느슨한 결합**: 메시지 큐를 활용한 비동기 처리로 각 서비스 간의 의존성 최소화
 
 - **고가용성**: 서버 장애 시에도 서비스가 지속적으로 운영될 수 있도록 고가용성 보장
 
@@ -135,22 +149,67 @@ CPU 사용량과 Load Average가 상대적으로 낮은 것을 확인할 수 있
 <br> 
 
 <details>
-    <summary><h4>결과 상세</h4></summary> 
-    <ul>
-        <li>
-            <h2>MVC</h2>
-            <img src="https://github.com/user-attachments/assets/318073b3-cb86-4871-bc21-ea7b4e319cf8" alt="mvc result" style="max-width: 100%; height: auto;">
-            <img src="https://github.com/user-attachments/assets/d63be685-863c-451c-bb73-f9ecc86b24a5" alt="mvc cpu" style="max-width: 100%; height: auto;">
-            <img src="https://github.com/user-attachments/assets/5c6a90cc-18ba-4cdc-8d07-b15c43bd9b7e" alt="mvc load" style="max-width: 100%; height: auto;">
-        </li>
-        <li>
-            <h2>WebFlux</h2>
-            <img src="https://github.com/user-attachments/assets/6c93c553-9789-49ac-ac7e-c374bf524842" alt="wf result" style="max-width: 100%; height: auto;">
-            <img src="https://github.com/user-attachments/assets/0ee46ed3-8400-49c2-ad17-466cd7b1bb91" alt="wf cpu" style="max-width: 100%; height: auto;">
-            <img src="https://github.com/user-attachments/assets/361909fe-4c7c-48d0-b11c-b9b57d1a74db" alt="wf load" style="max-width: 100%; height: auto;">
-        </li>
-    </ul>
+<summary><h4>결과 상세</h4></summary> 
+
+- MVC
+  
+  <img src="https://github.com/user-attachments/assets/318073b3-cb86-4871-bc21-ea7b4e319cf8" alt="mvc result" style="max-width: 100%; height: auto;">
+  <img src="https://github.com/user-attachments/assets/d63be685-863c-451c-bb73-f9ecc86b24a5" alt="mvc cpu" style="max-width: 100%; height: auto;">
+  <img src="https://github.com/user-attachments/assets/5c6a90cc-18ba-4cdc-8d07-b15c43bd9b7e" alt="mvc load" style="max-width: 100%; height: auto;">
+
+- WebFlux
+
+  <img src="https://github.com/user-attachments/assets/6c93c553-9789-49ac-ac7e-c374bf524842" alt="wf result" style="max-width: 100%; height: auto;">
+  <img src="https://github.com/user-attachments/assets/0ee46ed3-8400-49c2-ad17-466cd7b1bb91" alt="wf cpu" style="max-width: 100%; height: auto;">
+  <img src="https://github.com/user-attachments/assets/361909fe-4c7c-48d0-b11c-b9b57d1a74db" alt="wf load" style="max-width: 100%; height: auto;">
+
 </details>
+
+<br>
+
+## 🥇 Jmeter 성능 비교를 통한 좌석 선점 방식 선정
+
+Redis 데이터의 동시성 문제를 해결할 수 있는 Lua Script를 이용한 원자적 처리와, 분산락을 이용한 처리 두 가지 방법을 고민하였습니다.
+
+### 장단점 비교
+
+  | 장점 | 단점
+-- | -- | --
+Lua Script | - 네트워크 호출을 최소화할 수 있음 <br> - 락 해제 오류에 대한 위험성 없음 | - Redis 기본 함수를 알아야 함 <br> - Spring 실행 시 디버깅이 어려움
+분산락 | - Spring 코드로 디버깅이 편리 <br> - Redis 함수를 알지 못해도 쉽게 구현 가능 | - 분산락을 얻기 위한 네트워크 호출이 늘어남 <br> - 분산락이 해제되지 않을 가능성이 존재
+
+<br>
+
+### Jmeter 성능 테스트
+
+좌석 선점은 빠른 속도가 중요하다고 생각해 로컬 컴퓨터에서 `1,000`명의 동시 좌석 선점 속도를 비교해보았습니다.
+
+(CPU: AMD Ryzen 7 5700G, RAM: 32GB)
+
+<img src="https://github.com/user-attachments/assets/4261228a-4a3c-40b7-80ca-12cd1e9314d2" alt="image" width="90%">
+
+동일 환경에서 테스트한 결과 Lua Script에서 응답 속도가 2배 빠르고, 처리량도 더 높은 것을 확인할 수 있었습니다.
+
+<details>
+<summary><h4>결과 상세</h4></summary>
+
+-  Lua Script
+
+   ![LuaScript](https://github.com/user-attachments/assets/1623bcf9-29fc-4b7c-b9ac-726b1a39436a)
+
+-  분산락
+
+   ![Distributed Lock](https://github.com/user-attachments/assets/157b9dc0-ffab-402f-89b8-061ef566cbab)
+
+</details>
+
+<br>
+
+### 결론
+
+두 방식의 장단점과 실제 성능 결과를 바탕으로 속도도 빠르고 더 안정성도 높은 Lua Script를 활용해 좌석 선점을 구현하였습니다.
+
+<br>
 
 ## 📃 다이어그램
 
@@ -180,7 +239,8 @@ CPU 사용량과 Load Average가 상대적으로 낮은 것을 확인할 수 있
     <summary><h3>🎫 예매 시퀀스 다이어그램</h3></summary> 
 <br>  
 
-![ticketping_sa-예매 시퀀스 drawio (6)](https://github.com/user-attachments/assets/339a32a1-1c52-45dc-b605-6125262b3891)
+![ticketping_sa-예매 시퀀스 drawio](https://github.com/user-attachments/assets/1dca9e45-dfa9-40fe-9d9b-045a10d46495)
+
 
 </details>
 
@@ -192,7 +252,8 @@ CPU 사용량과 Load Average가 상대적으로 낮은 것을 확인할 수 있
     <summary><h3>✏️ ERD</h3></summary> 
 <br>  
 
-![ticketping-erd](https://github.com/user-attachments/assets/4604f251-4e39-4856-8d67-853d29622a86)
+![image](https://github.com/user-attachments/assets/b7e067c7-ea8a-4a93-bc49-9466b7b1219b)
+
 
 </details>
 
@@ -216,15 +277,27 @@ CPU 사용량과 Load Average가 상대적으로 낮은 것을 확인할 수 있
 
 - [🥶 Kafka Cluster 적용하기](https://github.com/TicketPing/TicketPing-Final/wiki/%F0%9F%A5%B6-Kafka-Cluster-%EC%A0%81%EC%9A%A9%ED%95%98%EA%B8%B0)
 
+- [✅ 인증 인가 구상하기](https://github.com/TicketPing/TicketPing-Final/wiki/%E2%9C%85-%EC%9D%B8%EC%A6%9D-%EC%9D%B8%EA%B0%80-%EA%B5%AC%EC%83%81%ED%95%98%EA%B8%B0)
+
+- [🎫 좌석 예매 흐름 구상하기](https://github.com/TicketPing/TicketPing-Final/wiki/%F0%9F%8E%AB-%EC%A2%8C%EC%84%9D-%EC%98%88%EB%A7%A4-%ED%9D%90%EB%A6%84-%EA%B5%AC%EC%83%81%ED%95%98%EA%B8%B0)
+
+- [💺 좌석 데이터 캐싱 구상하기](https://github.com/TicketPing/TicketPing-Final/wiki/%F0%9F%92%BA-%EC%A2%8C%EC%84%9D-%EB%8D%B0%EC%9D%B4%ED%84%B0-%EC%BA%90%EC%8B%B1-%EA%B5%AC%EC%83%81%ED%95%98%EA%B8%B0)
+
+- [↩️ Redis Keyspace Notifications을 이용한 좌석 선점 만료 구현](https://github.com/TicketPing/TicketPing-Final/wiki/%E2%86%A9%EF%B8%8F-Redis-Keyspace-Notifications%EC%9D%84-%EC%9D%B4%EC%9A%A9%ED%95%9C-%EC%A2%8C%EC%84%9D-%EC%84%A0%EC%A0%90-%EB%A7%8C%EB%A3%8C-%EA%B5%AC%ED%98%84)
+
+- [⏰ Grafana를 이용한 통합 모니터링 및 알람 구축](https://github.com/TicketPing/TicketPing-Final/wiki/%E2%8F%B0-Grafana%EB%A5%BC-%EC%9D%B4%EC%9A%A9%ED%95%9C-%ED%86%B5%ED%95%A9-%EB%AA%A8%EB%8B%88%ED%84%B0%EB%A7%81-%EB%B0%8F-%EC%95%8C%EB%9E%8C-%EA%B5%AC%EC%B6%95)
+
+- [⚡ 게이트웨이에 서킷브레이커 구축](https://github.com/TicketPing/TicketPing-Final/wiki/%E2%9A%A1-%EA%B2%8C%EC%9D%B4%ED%8A%B8%EC%9B%A8%EC%9D%B4%EC%97%90-%EC%84%9C%ED%82%B7%EB%B8%8C%EB%A0%88%EC%9D%B4%EC%BB%A4-%EA%B5%AC%EC%B6%95)
+
 <br>
 
 ## ⚽️ 트러블슈팅
 
 - [🎁 Lua Script를 활용한 대기열 진입 동시성 문제 해결](https://github.com/TicketPing/TicketPing-Final/wiki/%F0%9F%8E%81-Lua-Script%EB%A5%BC-%ED%99%9C%EC%9A%A9%ED%95%9C-%EB%8C%80%EA%B8%B0%EC%97%B4-%EC%A7%84%EC%9E%85-%EB%8F%99%EC%8B%9C%EC%84%B1-%EB%AC%B8%EC%A0%9C-%ED%95%B4%EA%B2%B0)
 
-- [🗣️ Redis Cluster 적용 이후 Lua Script 실행 오류 문제 해결](https://github.com/TicketPing/TicketPing-Final/wiki/%F0%9F%97%A3%EF%B8%8F-Redis-Cluster-%EC%A0%81%EC%9A%A9-%EC%9D%B4%ED%9B%84-Lua-Script-%EC%8B%A4%ED%96%89-%EC%98%A4%EB%A5%98-%EB%AC%B8%EC%A0%9C-%ED%95%B4%EA%B2%B0)
+- [🥇 Lua Script를 이용한 좌석 선점 동시성 문제 해결](https://github.com/TicketPing/TicketPing-Final/wiki/%F0%9F%A5%87-Lua-Script%EB%A5%BC-%EC%9D%B4%EC%9A%A9%ED%95%9C-%EC%A2%8C%EC%84%9D-%EC%84%A0%EC%A0%90-%EB%8F%99%EC%8B%9C%EC%84%B1-%EB%AC%B8%EC%A0%9C-%ED%95%B4%EA%B2%B0) 
 
-- [🖍️ Redis @class로 인해 다른 서버에서 캐시를 읽지 못하는 문제 해결](https://github.com/TicketPing/TicketPing-Final/wiki/%F0%9F%96%8D%EF%B8%8F-Redis-@class%EB%A1%9C-%EC%9D%B8%ED%95%B4-%EB%8B%A4%EB%A5%B8-%EC%84%9C%EB%B2%84%EC%97%90%EC%84%9C-%EC%BA%90%EC%8B%9C%EB%A5%BC-%EC%9D%BD%EC%A7%80-%EB%AA%BB%ED%95%98%EB%8A%94-%EB%AC%B8%EC%A0%9C-%ED%95%B4%EA%B2%B0)  
+- [🗣️ Redis Cluster 적용 이후 Lua Script 실행 오류 문제 해결](https://github.com/TicketPing/TicketPing-Final/wiki/%F0%9F%97%A3%EF%B8%8F-Redis-Cluster-%EC%A0%81%EC%9A%A9-%EC%9D%B4%ED%9B%84-Lua-Script-%EC%8B%A4%ED%96%89-%EC%98%A4%EB%A5%98-%EB%AC%B8%EC%A0%9C-%ED%95%B4%EA%B2%B0)
 
 <br>
   
@@ -255,6 +328,7 @@ CPU 사용량과 Load Average가 상대적으로 낮은 것을 확인할 수 있
           - 공연 서비스 개발 <br>
           - 주문 서비스 개발 <br>
           - 게이트웨이 JWT 인증 필터 개발 <br>
+          - 게이트웨이 서킷 브레이커 설정 <br>
           - 모니터링 시스템 구축 <br>
         </td>
         <td align="center"><a href="https://github.com/mii2026">GitHub</a></td>

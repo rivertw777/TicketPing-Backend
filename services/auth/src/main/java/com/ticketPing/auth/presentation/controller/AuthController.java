@@ -47,9 +47,8 @@ public class AuthController {
 
     @Operation(summary = "토큰 재발급")
     @PostMapping("/refresh")
-    public ResponseEntity<CommonResponse<TokenResponse>> refreshAccessToken(@RequestHeader(AUTHORIZATION_HEADER) String authHeader,
-                                                                            HttpServletRequest request, HttpServletResponse response) {
-        TokenResponse tokenResponse = authService.refreshAccessToken(authHeader, request, response);
+    public ResponseEntity<CommonResponse<TokenResponse>> refreshAccessToken(HttpServletRequest request, HttpServletResponse response) {
+        TokenResponse tokenResponse = authService.refreshAccessToken(request, response);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(CommonResponse.success(tokenResponse));

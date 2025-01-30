@@ -4,6 +4,7 @@ import com.ticketPing.queue_manage.application.dto.GeneralQueueTokenResponse;
 import com.ticketPing.queue_manage.application.service.WaitingQueueService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,9 +26,9 @@ public class WaitingQueueController {
     @Operation(summary = "대기열 진입")
     @PostMapping
     public Mono<ResponseEntity<CommonResponse<GeneralQueueTokenResponse>>> enterWaitingQueue(
-            @Valid @RequestHeader("X-USER-ID") String userId,
+            @Valid @RequestHeader("X_USER_ID") UUID userId,
             @Valid @RequestParam("performanceId") String performanceId) {
-        return waitingQueueService.enterWaitingQueue(userId, performanceId)
+        return waitingQueueService.enterWaitingQueue(userId.toString(), performanceId)
                 .map(CommonResponse::success)
                 .map(ResponseEntity::ok);
     }
@@ -35,9 +36,9 @@ public class WaitingQueueController {
     @Operation(summary = "대기열 상태 조회")
     @GetMapping
     public Mono<ResponseEntity<CommonResponse<GeneralQueueTokenResponse>>> getQueueInfo(
-            @Valid @RequestHeader("X-USER-ID") String userId,
+            @Valid @RequestHeader("X_USER_ID") UUID userId,
             @Valid @RequestParam("performanceId") String performanceId) {
-        return waitingQueueService.getQueueInfo(userId, performanceId)
+        return waitingQueueService.getQueueInfo(userId.toString(), performanceId)
                 .map(CommonResponse::success)
                 .map(ResponseEntity::ok);
     }

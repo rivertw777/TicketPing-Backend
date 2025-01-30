@@ -17,4 +17,5 @@ token-value:
 
 working-queue:
   max-size: ${WORKING_QUEUE_MAX_SIZE}
-  token-ttl: ${WORKING_QUEUE_TOKEN_TTL}
+  initial-token-ttl: ${INITIAL_WORKING_QUEUE_TOKEN_TTL}
+  extended-token-ttl: ${EXTENDED_WORKING_QUEUE_TOKEN_TTL}

@@ -25,6 +25,7 @@ public class CommonResponse<T> {
 
     public static CommonResponse<Object> success() {
         return CommonResponse.builder()
+                .message("success")
                 .build();
     }
 

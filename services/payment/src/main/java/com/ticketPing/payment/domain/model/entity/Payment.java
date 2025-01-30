@@ -4,14 +4,14 @@ import audit.BaseEntity;
 import com.ticketPing.payment.domain.model.enums.PaymentStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import java.time.ZonedDateTime;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
 import java.util.UUID;
-import order.OrderInfoForPaymentResponse;
+import org.json.simple.JSONObject;
 
 @Getter
 @NoArgsConstructor
@@ -36,19 +36,31 @@ public class Payment extends BaseEntity {
     private UUID orderId;
 
     @NotNull
+    private String orderName;
+
+    @NotNull
+    private String method;
+
+    @NotNull
     private Long amount;
 
-    public static Payment create(UUID userId, OrderInfoForPaymentResponse orderInfo) {
+    @NotNull
+    ZonedDateTime requestedAt;
+
+    @NotNull
+    ZonedDateTime approvedAt;
+
+    public static Payment create(UUID userId, JSONObject responseData) {
         return Payment.builder()
                 .userId(userId)
-                .status(PaymentStatus.PENDING)
-                .orderId(orderInfo.id())
-                .amount(orderInfo.amount())
+                .status(PaymentStatus.COMPLETED)
+                .orderId(UUID.fromString((String) responseData.get("orderId")))
+                .orderName((String) responseData.get("orderName"))
+                .method((String) responseData.get("method"))
+                .amount(((Number) responseData.get("totalAmount")).longValue())
+                .requestedAt(ZonedDateTime.parse((String) responseData.get("requestedAt")))
+                .approvedAt(ZonedDateTime.parse((String) responseData.get("approvedAt")))
                 .build();
-    }
-
-    public void complete() {
-        this.status = PaymentStatus.COMPLETED;
     }
 
 }

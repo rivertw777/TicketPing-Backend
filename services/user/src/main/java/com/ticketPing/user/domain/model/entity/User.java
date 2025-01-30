@@ -1,12 +1,9 @@
 package com.ticketPing.user.domain.model.entity;
 
 import audit.BaseEntity;
-import com.ticketPing.user.domain.model.enums.Gender;
+import com.ticketPing.user.presentation.request.CreateUserRequest;
 import jakarta.persistence.*;
 import lombok.*;
-import com.ticketPing.user.presentation.request.CreateUserRequest;
-
-import java.time.LocalDate;
 import java.util.UUID;
 
 @Getter
@@ -24,16 +21,12 @@ public class User extends BaseEntity {
     private String email;
     private String password;
     private String nickname;
-    private LocalDate birthday;
-    private Gender gender;
 
     public static User from(CreateUserRequest request, String encodedPassword) {
         return User.builder()
                 .email(request.email())
                 .password(encodedPassword)
                 .nickname(request.nickname())
-                .birthday(request.birthday())
-                .gender(Gender.getGender(request.gender()))
                 .build();
     }
 }

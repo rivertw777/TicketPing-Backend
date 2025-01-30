@@ -1,7 +1,7 @@
 package com.ticketPing.queue_manage.domain.command.workingQueue;
 
 import static caching.enums.RedisKeyPrefix.WORKING_QUEUE;
-import static com.ticketPing.queue_manage.common.utils.ConfigHolder.workingQueueTokenTTL;
+import static com.ticketPing.queue_manage.common.utils.ConfigHolder.initialWorkingQueueTokenTTL;
 
 import com.ticketPing.queue_manage.domain.model.WorkingQueueToken;
 import lombok.AccessLevel;
@@ -28,7 +28,8 @@ public class InsertWorkingQueueTokenCommand {
                 .tokenValue(token.getTokenValue())
                 .queueName(WORKING_QUEUE.getValue() + token.getPerformanceId())
                 .cacheValue("NA")
-                .ttlInMinutes(workingQueueTokenTTL()).build();
+                .ttlInMinutes(initialWorkingQueueTokenTTL())
+                .build();
     }
 
 }

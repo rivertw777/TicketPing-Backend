@@ -5,7 +5,7 @@ import static caching.enums.RedisKeyPrefix.WAITING_QUEUE;
 import static com.ticketPing.gateway.common.exception.FilterErrorCase.PERFORMANCE_SOLD_OUT;
 import static com.ticketPing.gateway.common.exception.FilterErrorCase.TOO_MANY_WAITING_USERS;
 import static com.ticketPing.gateway.common.exception.FilterErrorCase.WORKING_QUEUE_TOKEN_NOT_FOUND;
-import static com.ticketPing.gateway.common.utils.QueueTokenValueGenerator.generateTokenValue;
+import static com.ticketPing.gateway.common.utils.TokenValueGenerator.generateTokenValue;
 
 import caching.repository.ReactiveRedisRepository;
 import exception.ApplicationException;

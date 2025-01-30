@@ -1,31 +1,34 @@
 package com.ticketPing.order.application.service;
 
-import com.ticketPing.order.application.dtos.OrderInfoForPaymentResponse;
-import com.ticketPing.order.infrastructure.service.RedisLuaService;
-import com.ticketPing.order.presentation.request.OrderCreateDto;
-import com.ticketPing.order.application.dtos.OrderInfoResponse;
+import com.ticketPing.order.application.client.PaymentClient;
+import com.ticketPing.order.application.client.PerformanceClient;
 import com.ticketPing.order.application.dtos.OrderResponse;
+import com.ticketPing.order.common.exception.OrderExceptionCase;
 import com.ticketPing.order.domain.model.entity.Order;
 import com.ticketPing.order.domain.model.entity.OrderSeat;
 import com.ticketPing.order.domain.model.enums.OrderStatus;
-import com.ticketPing.order.infrastructure.client.PerformanceClient;
-import com.ticketPing.order.infrastructure.repository.OrderRepository;
-import messaging.events.OrderCompletedEvent;
+import com.ticketPing.order.domain.repository.OrderRepository;
+import com.ticketPing.order.presentation.request.CreateOrderRequest;
 import exception.ApplicationException;
+import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import messaging.events.OrderCompletedForQueueTokenRemovalEvent;
+import messaging.events.OrderCompletedForSeatReservationEvent;
+import messaging.events.OrderFailedEvent;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import performance.OrderSeatResponse;
 
-import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
-import caching.repository.RedisRepository;
 
-import static caching.enums.RedisKeyPrefix.AVAILABLE_SEATS;
-import static caching.enums.RedisKeyPrefix.SEAT_CACHE;
-import static com.ticketPing.order.common.exception.OrderExceptionCase.*;
+import static com.ticketPing.order.common.exception.OrderExceptionCase.DUPLICATED_ORDER;
+import static com.ticketPing.order.common.exception.OrderExceptionCase.ORDER_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -34,97 +37,105 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final EventApplicationService eventApplicationService;
-    private final RedisRepository redisRepository;
-    private final RedisLuaService redisLuaService;
     private final PerformanceClient performanceClient;
-
-    private final static String SEAT_PREFIX = SEAT_CACHE.getValue();
-    private final static String TTL_PREFIX = "{Seat}:seat_ttl:";
-    private final static String SEAT_LOCK_CACHE_EXPIRE_SECONDS = "300";
+    private final PaymentClient paymentClient;
 
     @Transactional
-    public OrderResponse createOrder(OrderCreateDto orderCreateRequestDto, UUID userId) {
-        UUID scheduleId = orderCreateRequestDto.scheduleId();
-        UUID seatId = orderCreateRequestDto.seatId();
+    public OrderResponse createOrder(CreateOrderRequest createOrderRequest, UUID userId) {
+        UUID scheduleId = createOrderRequest.scheduleId();
+        UUID seatId = createOrderRequest.seatId();
 
-        Order order = saveOrderWithOrderSeat(seatId, userId);
-
-        String seatKey = SEAT_PREFIX + scheduleId + ":" + seatId;
-        String ttlKey = TTL_PREFIX + scheduleId + ":" + seatId + ":" + order.getId();
-        redisLuaService.updateSeatStatus(seatKey, ttlKey, SEAT_LOCK_CACHE_EXPIRE_SECONDS);
-
+        validateDuplicateOrder(seatId);
+        OrderSeatResponse orderData = performanceClient.getOrderInfo(userId, scheduleId, seatId).getBody().getData();
+        Order order = saveOrderWithOrderSeat(userId, orderData);
         return OrderResponse.from(order);
     }
 
-    @Transactional
-    public Order saveOrderWithOrderSeat(UUID seatId, UUID userId) {
-        OrderInfoResponse orderData = performanceClient.getOrderInfo(seatId.toString()).getBody().getData();
+    public Slice<OrderResponse> getUserOrders(UUID userId, Pageable pageable) {
+        Slice<Order> orders = orderRepository.findUserOrdersExcludingStatus(
+                userId, List.of(OrderStatus.PENDING, OrderStatus.FAIL), pageable);
+        return orders.map(OrderResponse::from);
+    }
 
-        Order order = Order.create(userId, orderData.companyId(), orderData.performanceId(), orderData.performanceName(), LocalDateTime.now(), OrderStatus.PENDING, orderData.scheduleId());
+    public void validateOrderAndExtendTTL(UUID orderId, UUID userId) {
+        Order order = validateAndGetOrder(orderId, userId);
+        performanceClient.extendPreReserveTTL(order.getScheduleId(), order.getOrderSeat().getSeatId());
+    }
+
+    @Transactional
+    public void failOrder(UUID scheduleId, UUID seatId) {
+        Optional<Order> optionalOrder = orderRepository.findByOrderSeatSeatIdAndOrderStatus(seatId, OrderStatus.PENDING);
+
+        if (optionalOrder.isPresent()) {
+            Order order = optionalOrder.get();
+            try {
+                paymentClient.getCompletedPaymentByOrderId(order.getId());
+            } catch (FeignException.NotFound e) {
+                order.fail();
+                publishOrderFailed(scheduleId, seatId);
+            }
+        } else {
+            publishOrderFailed(scheduleId, seatId);
+        }
+    }
+
+    @Transactional
+    public void completeOrder(UUID orderId, UUID paymentId) {
+        Order order = findOrderById(orderId);
+        order.complete(paymentId);
+
+        publishForSeatReservation(order.getScheduleId(), order.getOrderSeat().getSeatId());
+        publishForQueueTokenRemoval(order.getUserId(), order.getPerformanceId());
+    }
+
+    @Transactional
+    private Order saveOrderWithOrderSeat(UUID userId, OrderSeatResponse orderData) {
+        Order order = Order.from(userId, orderData);
         Order savedOrder = orderRepository.save(order);
 
-        OrderSeat orderSeat = OrderSeat.create(orderData.seatId(), orderData.row(), orderData.col(), orderData.seatRate(), orderData.cost());
+        OrderSeat orderSeat = OrderSeat.from(orderData, savedOrder);
         savedOrder.updateOrderSeat(orderSeat);
 
         return savedOrder;
     }
 
-    @Transactional(readOnly = true)
-    public OrderInfoForPaymentResponse getOrderInfoForPayment(UUID orderId, UUID userId) {
-        Order order = findOrderById(orderId);
-        validateDuplicateOrder(order, userId);
-        return OrderInfoForPaymentResponse.from(order);
+    private void validateDuplicateOrder(UUID seatId) {
+        boolean hasDuplicate = orderRepository.existsByOrderSeatSeatIdAndOrderStatusIn(
+                seatId, List.of(OrderStatus.PENDING, OrderStatus.COMPLETED));
+
+        if (hasDuplicate) {
+            throw new ApplicationException(DUPLICATED_ORDER);
+        }
     }
 
-    public void validateDuplicateOrder(Order order, UUID userId) {
-        UUID seatId = order.getOrderSeat().getSeatId();
-        UUID scheduleId = order.getScheduleId();
+    private Order validateAndGetOrder(UUID orderId, UUID userId) {
+        Order order = orderRepository.findByIdAndOrderStatus(orderId, OrderStatus.PENDING)
+                .orElseThrow(() -> new ApplicationException(OrderExceptionCase.INVALID_ORDER));
 
-        List<Order> duplicateOrders = orderRepository.findByScheduleIdAndOrderSeatSeatId(seatId, scheduleId)
-                .stream()
-                .filter(o -> !o.getUserId().equals(userId) &&
-                        (o.getOrderStatus().equals(OrderStatus.PENDING) ||
-                        o.getOrderStatus().equals(OrderStatus.COMPLETED)))
-                .toList();
+        if (!order.getUserId().equals(userId)) {
+            throw new ApplicationException(OrderExceptionCase.INVALID_ORDER);
+        }
 
-        if(!duplicateOrders.isEmpty())
-            throw new ApplicationException(SEAT_ALREADY_TAKEN);
+        return order;
     }
 
-    public List<OrderResponse> getUserOrders(UUID userId) {
-        List<Order> orders = orderRepository.findByUserId(userId);
-        return orders.stream().map(OrderResponse::from).toList();
-    }
-
-    @Transactional
-    public void updateOrderStatus(UUID orderId) {
-        Order order = findOrderById(orderId);
-        order.complete();
-
-        UUID performanceId = order.getPerformanceId();
-        UUID scheduleId = order.getScheduleId();
-        UUID seatId = order.getOrderSeat().getSeatId();
-
-        performanceClient.updateSeatState(order.getOrderSeat().getSeatId(), true);  // 1. 좌석 db 업데이트 (kafka로 변경?)
-
-        String ttlKey = TTL_PREFIX + scheduleId + ":" + seatId + ":" + orderId;
-        redisRepository.deleteKey(ttlKey);
-
-        String counterKey = AVAILABLE_SEATS.getValue() + performanceId;
-        redisRepository.decrement(counterKey);
-
-        publishOrderCompletedEvent(order.getUserId(), performanceId);
-    }
-
-    @Transactional(readOnly = true)
-    public Order findOrderById(UUID orderId){
+    private Order findOrderById(UUID orderId){
         return orderRepository.findById(orderId)
                 .orElseThrow(() -> new ApplicationException(ORDER_NOT_FOUND));
     }
 
-    private void publishOrderCompletedEvent(UUID userId, UUID performanceId) {
-        val event = OrderCompletedEvent.create(userId, performanceId);
-        eventApplicationService.publishOrderCompletedEvent(event);
+    private void publishForSeatReservation(UUID scheduleId, UUID seatId) {
+        val event = OrderCompletedForSeatReservationEvent.create(scheduleId, seatId);
+        eventApplicationService.publishForSeatReservation(event);
     }
 
+    private void publishForQueueTokenRemoval(UUID userId, UUID performanceId) {
+        val event = OrderCompletedForQueueTokenRemovalEvent.create(userId, performanceId);
+        eventApplicationService.publishForQueueTokenRemoval(event);
+    }
+
+    private void publishOrderFailed(UUID scheduleId, UUID seatId) {
+        val event = OrderFailedEvent.create(scheduleId, seatId);
+        eventApplicationService.publishOrderFailed(event);
+    }
 }

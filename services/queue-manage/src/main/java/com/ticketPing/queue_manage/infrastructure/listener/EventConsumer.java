@@ -7,6 +7,7 @@ import com.ticketPing.queue_manage.application.service.WorkingQueueService;
 import java.time.Duration;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import messaging.events.OrderCompletedForQueueTokenRemovalEvent;
 import messaging.utils.EventLogger;
 import messaging.utils.EventSerializer;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -16,7 +17,6 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 import reactor.kafka.receiver.ReceiverRecord;
 import reactor.util.retry.Retry;
-import messaging.events.OrderCompletedEvent;
 import messaging.topics.OrderTopic;
 
 @Slf4j
@@ -38,7 +38,7 @@ public class EventConsumer {
     }
 
     private Mono<Void> handleMessage(ReceiverRecord<String, String> record) {
-        if (record.topic().equals(OrderTopic.COMPLETED.getTopic())) {
+        if (record.topic().equals(OrderTopic.COMPLETED_FOR_QUEUE_TOKEN_REMOVAL.getTopic())) {
             return handleOrderCompletedEvent(record);
         }
         return Mono.empty();
@@ -46,7 +46,7 @@ public class EventConsumer {
 
     private Mono<Void> handleOrderCompletedEvent(ReceiverRecord<String, String> record) {
         EventLogger.logReceivedMessage(record);
-        OrderCompletedEvent event = EventSerializer.deserialize(record.value(), OrderCompletedEvent.class);
+        OrderCompletedForQueueTokenRemovalEvent event = EventSerializer.deserialize(record.value(), OrderCompletedForQueueTokenRemovalEvent.class);
         String tokenValue = generateTokenValue(event.userId(), event.performanceId());
 
         return Mono.fromRunnable(() -> workingQueueService.transferToken(ORDER_COMPLETED, tokenValue))

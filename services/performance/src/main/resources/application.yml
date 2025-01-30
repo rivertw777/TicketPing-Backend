@@ -13,8 +13,14 @@ spring:
       - "classpath:application-eureka.yml"
       - "classpath:application-jpa.yml"
       - "classpath:application-redis.yml"
+      - "classpath:application-kafka.yml"
       - "classpath:application-monitoring.yml"
 
 server:
   port: 10012
 
+seat:
+  pre-reserve-ttl: 300
+
+discord:
+  webhook-url: ${DISCORD_WEBHOOK_URL}
