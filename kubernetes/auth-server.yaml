@@ -32,22 +32,52 @@ spec:
             - containerPort: 10010
           env:
             - name: EUREKA_SERVER
-              value: ${EUREKA_SERVER}
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: EUREKA_SERVER
             - name: REDIS_NODE_1
-              value: ${REDIS_NODE_1}
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: REDIS_NODE_1
             - name: REDIS_NODE_2
-              value: ${REDIS_NODE_2}
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: REDIS_NODE_2
             - name: REDIS_NODE_3
-              value: ${REDIS_NODE_3}
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: REDIS_NODE_3
             - name: REDIS_NODE_4
-              value: ${REDIS_NODE_4}
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: REDIS_NODE_4
             - name: REDIS_NODE_5
-              value: ${REDIS_NODE_5}
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: REDIS_NODE_5
             - name: REDIS_NODE_6
-              value: ${REDIS_NODE_6}
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: REDIS_NODE_6
             - name: LOKI_HOST
-              value: ${LOKI_HOST}
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: LOKI_HOST
             - name: ZIPKIN
-              value: ${ZIPKIN}
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: ZIPKIN
             - name: JWT_SECRET_KEY
-              value: 5e9e176752d012ff1f6e27ac24f9bbc6ca2d3b904d5b2a23b8a409609006ee80
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: JWT_SECRET_KEY
