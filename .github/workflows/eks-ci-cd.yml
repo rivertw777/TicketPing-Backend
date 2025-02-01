@@ -67,7 +67,7 @@ jobs:
       - name: Update ConfigMap
         run: |
           touch env-config.yml
-          echo "${{ secrets.APPLICATION_TEST }}" > env-config.yml
+          echo "${{ secrets.ENV_CONFIG }}" > env-config.yml
           kubectl apply -f env-config.yml
 
       - name: Deploy to EKS
