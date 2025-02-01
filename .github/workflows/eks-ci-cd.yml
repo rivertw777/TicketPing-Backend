@@ -78,7 +78,7 @@ jobs:
 
       - name: Build and push image to ECR
         env:
-          ECR_REGISTRY: ${{ needs.prepare-environment.outputs.ecr-registry }}
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         run: |
           docker build -t $ECR_REGISTRY/${{ matrix.service.ecr_repository }} -f ${{ matrix.service.dockerfile_path }} ${{ matrix.service.context_path }}
           docker push $ECR_REGISTRY/${{ matrix.service.ecr_repository }}
