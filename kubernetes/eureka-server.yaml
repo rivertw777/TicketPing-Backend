@@ -27,6 +27,6 @@ spec:
     spec:
       containers:
         - name: eureka-server
-          image: 654654346698.dkr.ecr.ap-northeast-2.amazonaws.com/t/eureka-server:latest
+          image: 654654346698.dkr.ecr.ap-northeast-2.amazonaws.com/ticketping/eureka-server:latest
           ports:
             - containerPort: 10000
