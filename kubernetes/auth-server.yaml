@@ -50,4 +50,4 @@ spec:
             - name: ZIPKIN
               value: ${ZIPKIN}
             - name: JWT_SECRET_KEY
-              value: ${JWT_SECRET_KEY}
+              value: 5e9e176752d012ff1f6e27ac24f9bbc6ca2d3b904d5b2a23b8a409609006ee80
