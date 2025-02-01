@@ -21,10 +21,18 @@ jobs:
             dockerfile_path: './eureka-server/Dockerfile'
             context_path: './eureka-server'
             k8s_manifest_path: './kubernetes/eureka-server.yaml'
+          - name: 'user-server'
+            ecr_repository: 'ticketping/user-server'
+            dockerfile_path: '.services/user/Dockerfile'
+            context_path: '.services/user'
+            k8s_manifest_path: './kubernetes/user-server.yaml'
 
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+
+      - name: Create .env file
+        run: echo "${{ secrets.ENV_FILE }}" > .env
 
       - name: Set up JDK 17
         uses: actions/setup-java@v2

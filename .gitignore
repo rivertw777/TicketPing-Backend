@@ -37,10 +37,10 @@ out/
 ### VS Code ###
 .vscode/
 
-application-private.yml
 application**local.yml
-application**test.yml
 
 docker-compose/.env
 
 docker-compose-test.yml
+
+kubernetes/.env
