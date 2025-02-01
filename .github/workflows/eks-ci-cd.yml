@@ -64,11 +64,8 @@ jobs:
       - name: Update kubeconfig
         run: aws eks update-kubeconfig --name ${{ env.EKS_CLUSTER_NAME }} --region ${{ env.AWS_REGION }}
 
-      - name: Update ConfigMap
-        run: |
-          touch env-config.yml
-          echo "${{ secrets.ENV_CONFIG }}" > env-config.yml
-          kubectl apply -f env-config.yml
+      - name: Setup ConfigMap
+        run: echo "${{ secrets.ENV_CONFIG }}" | kubectl apply -f -
 
       - name: Deploy to EKS
         run: |

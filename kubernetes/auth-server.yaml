@@ -5,7 +5,7 @@ metadata:
 spec:
   selector:
     app: auth-server
-  type: LoadBalancer
+  type: ClusterIP
   ports:
     - protocol: TCP
       port: 10010
@@ -32,10 +32,7 @@ spec:
             - containerPort: 10010
           env:
             - name: EUREKA_SERVER
-              valueFrom:
-                configMapKeyRef:
-                  name: env-config
-                  key: EUREKA_SERVER
+              value: http://eureka-server-service.default:10000/eureka/
             - name: REDIS_NODE_1
               valueFrom:
                 configMapKeyRef:
