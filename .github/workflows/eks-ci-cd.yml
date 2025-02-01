@@ -20,7 +20,7 @@ jobs:
             ecr_repository: 'ticketping/eureka-server'
             dockerfile_path: './eureka-server/Dockerfile'
             context_path: './eureka-server'
-            k8s_manifest: './kubernetes/eureka-server.yaml'
+            k8s_manifest_path: './kubernetes/eureka-server.yaml'
 
     steps:
       - name: Checkout
@@ -60,7 +60,6 @@ jobs:
         run: aws eks update-kubeconfig --name ${{ env.EKS_CLUSTER_NAME }} --region ${{ env.AWS_REGION }}
 
       - name: Deploy to EKS
-        working-directory: ./kubernetes
         run: |
-          kubectl apply -f ${{ matrix.service.k8s_manifest }}  
+          kubectl apply -f ${{ matrix.service.k8s_manifest_path }}  
           kubectl rollout status deployment/${{ matrix.service.name }}-deployment -n default
