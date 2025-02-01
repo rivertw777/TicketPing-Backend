@@ -27,7 +27,7 @@ spec:
     spec:
       containers:
         - name: auth-server
-          image: taewon171/auth-server:latest
+          image: ticketping/auth-server:latest
           ports:
             - containerPort: 10010
           env:

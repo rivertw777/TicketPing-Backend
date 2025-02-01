@@ -27,7 +27,7 @@ spec:
     spec:
       containers:
         - name: gateway-server
-          image: taewon171/gateway-server:latest
+          image: ticketping/gateway-server:latest
           ports:
             - containerPort: 10001
           env:

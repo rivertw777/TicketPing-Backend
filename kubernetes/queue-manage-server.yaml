@@ -27,7 +27,7 @@ spec:
     spec:
       containers:
         - name: queue-manage-server
-          image: taewon171/queue-manage-server:latest
+          image: ticketping/queue-manage-server:latest
           ports:
             - containerPort: 10015
           env:

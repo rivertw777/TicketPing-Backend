@@ -27,7 +27,7 @@ spec:
     spec:
       containers:
         - name: performance-server
-          image: taewon171/performance-server:latest
+          image: ticketping/performance-server:latest
           ports:
             - containerPort: 10012
           env:
