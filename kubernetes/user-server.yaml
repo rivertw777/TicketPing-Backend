@@ -27,7 +27,7 @@ spec:
     spec:
       containers:
         - name: user-server
-          image: taewon171/user-server:latest
+          image: ticketping/user-server:latest
           ports:
             - containerPort: 10011
           env:

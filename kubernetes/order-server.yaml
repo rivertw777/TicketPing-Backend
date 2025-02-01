@@ -27,7 +27,7 @@ spec:
     spec:
       containers:
         - name: order-server
-          image: taewon171/order-server:latest
+          image: ticketping/order-server:latest
           ports:
             - containerPort: 10013
           env:

@@ -27,7 +27,7 @@ spec:
     spec:
       containers:
         - name: payment-server
-          image: taewon171/payment-server:latest
+          image: ticketping/payment-server:latest
           ports:
             - containerPort: 10014
           env:

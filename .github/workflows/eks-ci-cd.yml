@@ -1,4 +1,4 @@
-name: CI/CD Workflow
+name: EKS CI/CD Workflow
 
 on:
   pull_request:
@@ -6,7 +6,8 @@ on:
   workflow_dispatch:
 
 env:
-  AWS_REGION: ap-northeast-2
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+  EKS_CLUSTER_NAME: ${{ secrets.EKS_CLUSTER_NAME }}
 
 jobs:
   build-and-push:
@@ -19,6 +20,7 @@ jobs:
             ecr_repository: 'ticketping/eureka-server'
             dockerfile_path: './eureka-server/Dockerfile'
             context_path: './eureka-server'
+            k8s_manifest: './kubernetes/eureka-server.yaml'
 
     steps:
       - name: Checkout
@@ -53,3 +55,12 @@ jobs:
         run: |
           docker build -t $ECR_REGISTRY/${{ matrix.service.ecr_repository }} -f ${{ matrix.service.dockerfile_path }} ${{ matrix.service.context_path }}
           docker push $ECR_REGISTRY/${{ matrix.service.ecr_repository }}
+
+      - name: Update kubeconfig
+        run: aws eks update-kubeconfig --name ${{ env.EKS_CLUSTER_NAME }} --region ${{ env.AWS_REGION }}
+
+      - name: Deploy to EKS
+        working-directory: ./kubernetes
+        run: |
+          kubectl apply -f ${{ matrix.service.k8s_manifest }}  
+          kubectl rollout status deployment/${{ matrix.service.name }}-deployment -n default
