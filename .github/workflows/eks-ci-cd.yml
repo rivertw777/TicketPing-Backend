@@ -67,6 +67,9 @@ jobs:
             k8s_manifest_path: './kubernetes/auth-server.yaml'
 
     steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
       - name: Build and push image to ECR
         env:
           ECR_REGISTRY: ${{ needs.prepare-environment.outputs.ecr-registry }}
