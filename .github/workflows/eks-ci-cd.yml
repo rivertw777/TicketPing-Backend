@@ -21,11 +21,11 @@ jobs:
             dockerfile_path: './eureka-server/Dockerfile'
             context_path: './eureka-server'
             k8s_manifest_path: './kubernetes/eureka-server.yaml'
-          - name: 'user-server'
-            ecr_repository: 'ticketping/user-server'
-            dockerfile_path: './services/user/Dockerfile'
-            context_path: './services/user'
-            k8s_manifest_path: './kubernetes/user-server.yaml'
+          - name: 'auth-server'
+            ecr_repository: 'ticketping/auth-server'
+            dockerfile_path: './services/auth/Dockerfile'
+            context_path: './services/auth'
+            k8s_manifest_path: './kubernetes/auth-server.yaml'
 
     steps:
       - name: Checkout
