@@ -27,7 +27,7 @@ spec:
     spec:
       containers:
         - name: auth-server
-          image: t/ticketping/auth-server:latest
+          image: 654654346698.dkr.ecr.ap-northeast-2.amazonaws.com/t/ticketping/auth-server:latest
           ports:
             - containerPort: 10010
           env:
