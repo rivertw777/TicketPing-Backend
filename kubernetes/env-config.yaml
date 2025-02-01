@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: env-config
+data:
+  EUREKA_SERVER: http://eureka-server-service.default:10000/eureka/
+  REDIS_NODE_1: localhost:7001
+  REDIS_NODE_2: localhost:7002
+  REDIS_NODE_3: localhost:7003
+  REDIS_NODE_4: localhost:7004
+  REDIS_NODE_5: localhost:7005
+  REDIS_NODE_6: localhost:7006
+  LOKI_HOST: localhost
+  ZIPKIN: http://zipkin:9411/api/v2/spans
+  JWT_SECRET_KEY: 5e9e176752d012ff1f6e27ac24f9bbc6ca2d3b904d5b2a23b8a409609006ee80
