@@ -27,6 +27,6 @@ spec:
     spec:
       containers:
         - name: eureka-server
-          image: ticketping/eureka-server:latest
+          image: t/eureka-server:latest
           ports:
             - containerPort: 10000
