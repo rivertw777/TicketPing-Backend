@@ -16,6 +16,11 @@ jobs:
     strategy:
       matrix:
         service:
+          - name: 'eureka-server'
+            ecr_repository: 'ticketping/eureka-server'
+            dockerfile_path: './eureka-server/Dockerfile'
+            context_path: './eureka-server'
+            k8s_manifest_path: './kubernetes/eureka-server.yaml'
           - name: 'auth-server'
             ecr_repository: 'ticketping/auth-server'
             dockerfile_path: './services/auth/Dockerfile'
