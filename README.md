@@ -285,9 +285,9 @@ Lua Script | - 네트워크 호출을 최소화할 수 있음 <br> - 락 해제 
 
 - [💺 좌석 데이터 캐싱 구상하기](https://github.com/TicketPing/TicketPing-Final/wiki/%F0%9F%92%BA-%EC%A2%8C%EC%84%9D-%EB%8D%B0%EC%9D%B4%ED%84%B0-%EC%BA%90%EC%8B%B1-%EA%B5%AC%EC%83%81%ED%95%98%EA%B8%B0)
 
-- [⏰ Grafana를 이용한 통합 모니터링 및 알람 구축](https://github.com/TicketPing/TicketPing-Final/wiki/%E2%8F%B0-Grafana%EB%A5%BC-%EC%9D%B4%EC%9A%A9%ED%95%9C-%ED%86%B5%ED%95%A9-%EB%AA%A8%EB%8B%88%ED%84%B0%EB%A7%81-%EB%B0%8F-%EC%95%8C%EB%9E%8C-%EA%B5%AC%EC%B6%95)
+- [⏰ Grafana를 이용한 통합 모니터링 및 알림 구축](https://github.com/TicketPing/TicketPing-Final/wiki/%E2%8F%B0-Grafana%EB%A5%BC-%EC%9D%B4%EC%9A%A9%ED%95%9C-%ED%86%B5%ED%95%A9-%EB%AA%A8%EB%8B%88%ED%84%B0%EB%A7%81-%EB%B0%8F-%EC%95%8C%EB%A6%BC-%EA%B5%AC%EC%B6%95)
 
-- [⚡ 서킷브레이커 구축하기](https://github.com/TicketPing/TicketPing-Final/wiki/%E2%9A%A1-%EA%B2%8C%EC%9D%B4%ED%8A%B8%EC%9B%A8%EC%9D%B4%EC%97%90-%EC%84%9C%ED%82%B7%EB%B8%8C%EB%A0%88%EC%9D%B4%EC%BB%A4-%EA%B5%AC%EC%B6%95)
+- [⚡ 서킷브레이커 구축하기](https://github.com/TicketPing/TicketPing-Final/wiki/%E2%9A%A1-%EC%84%9C%ED%82%B7%EB%B8%8C%EB%A0%88%EC%9D%B4%EC%BB%A4-%EA%B5%AC%EC%B6%95%ED%95%98%EA%B8%B0)
 
 <br>
 
