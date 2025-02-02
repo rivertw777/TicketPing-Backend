@@ -27,29 +27,62 @@ spec:
     spec:
       containers:
         - name: gateway-server
-          image: ticketping/gateway-server:latest
+          image: 654654346698.dkr.ecr.ap-northeast-2.amazonaws.com/ticketping/gateway-server:latest
           ports:
             - containerPort: 10001
           env:
             - name: EUREKA_SERVER
-              value: ${EUREKA_SERVER}
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: EUREKA_SERVER
             - name: REDIS_NODE_1
-              value: ${REDIS_NODE_1}
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: REDIS_NODE_1
             - name: REDIS_NODE_2
-              value: ${REDIS_NODE_2}
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: REDIS_NODE_2
             - name: REDIS_NODE_3
-              value: ${REDIS_NODE_3}
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: REDIS_NODE_3
             - name: REDIS_NODE_4
-              value: ${REDIS_NODE_4}
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: REDIS_NODE_4
             - name: REDIS_NODE_5
-              value: ${REDIS_NODE_5}
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: REDIS_NODE_5
             - name: REDIS_NODE_6
-              value: ${REDIS_NODE_6}
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: REDIS_NODE_6
             - name: LOKI_HOST
-              value: ${LOKI_HOST}
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: LOKI_HOST
             - name: ZIPKIN
-              value: ${ZIPKIN}
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: ZIPKIN
             - name: FRONTEND_APP_URL
-              value: ${FRONTEND_APP_URL}
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: FRONTEND_APP_URL
             - name: USER_TOKEN_SECRET_KEY
-              value: ${USER_TOKEN_SECRET_KEY}
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: USER_TOKEN_SECRET_KEY

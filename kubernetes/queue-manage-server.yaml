@@ -27,39 +27,87 @@ spec:
     spec:
       containers:
         - name: queue-manage-server
-          image: ticketping/queue-manage-server:latest
+          image: 654654346698.dkr.ecr.ap-northeast-2.amazonaws.com/ticketping/queue-manage-server:latest
           ports:
             - containerPort: 10015
           env:
             - name: EUREKA_SERVER
-              value: ${EUREKA_SERVER}
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: EUREKA_SERVER
             - name: REDIS_NODE_1
-              value: ${REDIS_NODE_1}
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: REDIS_NODE_1
             - name: REDIS_NODE_2
-              value: ${REDIS_NODE_2}
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: REDIS_NODE_2
             - name: REDIS_NODE_3
-              value: ${REDIS_NODE_3}
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: REDIS_NODE_3
             - name: REDIS_NODE_4
-              value: ${REDIS_NODE_4}
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: REDIS_NODE_4
             - name: REDIS_NODE_5
-              value: ${REDIS_NODE_5}
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: REDIS_NODE_5
             - name: REDIS_NODE_6
-              value: ${REDIS_NODE_6}
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: REDIS_NODE_6
             - name: KAFKA_BROKER_1
-              value: ${KAFKA_BROKER_1}
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: KAFKA_BROKER_1
             - name: KAFKA_BROKER_2
-              value: ${KAFKA_BROKER_2}
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: KAFKA_BROKER_2
             - name: KAFKA_BROKER_3
-              value: ${KAFKA_BROKER_3}
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: KAFKA_BROKER_3
             - name: LOKI_HOST
-              value: ${LOKI_HOST}
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: LOKI_HOST
             - name: ZIPKIN
-              value: ${ZIPKIN}
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: ZIPKIN
             - name: USER_TOKEN_SECRET_KEY
-              value: ${USER_TOKEN_SECRET_KEY}
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: USER_TOKEN_SECRET_KEY
             - name: WORKING_QUEUE_MAX_SIZE
-              value: ${WORKING_QUEUE_MAX_SIZE}
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: WORKING_QUEUE_MAX_SIZE
             - name: INITIAL_WORKING_QUEUE_TOKEN_TTL
-              value: ${INITIAL_WORKING_QUEUE_TOKEN_TTL}
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: INITIAL_WORKING_QUEUE_TOKEN_TTL
             - name: EXTENDED_WORKING_QUEUE_TOKEN_TTL
-              value: ${EXTENDED_WORKING_QUEUE_TOKEN_TTL}
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: EXTENDED_WORKING_QUEUE_TOKEN_TTL

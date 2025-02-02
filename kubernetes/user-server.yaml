@@ -27,19 +27,37 @@ spec:
     spec:
       containers:
         - name: user-server
-          image: ticketping/user-server:latest
+          image: 654654346698.dkr.ecr.ap-northeast-2.amazonaws.com/ticketping/user-server:latest
           ports:
             - containerPort: 10011
           env:
             - name: EUREKA_SERVER
-              value: ${EUREKA_SERVER}
-            - name: USER_POSTGRES_URL
-              value: ${USER_POSTGRES_URL}
-            - name: USER_POSTGRES_USERNAME
-              value: ${USER_POSTGRES_USERNAME}
-            - name: USER_POSTGRES_PASSWORD
-              value: ${USER_POSTGRES_PASSWORD}
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: EUREKA_SERVER
             - name: LOKI_HOST
-              value: ${LOKI_HOST}
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: LOKI_HOST
             - name: ZIPKIN
-              value: ${ZIPKIN}
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: ZIPKIN
+            - name: USER_POSTGRES_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: USER_POSTGRES_URL
+            - name: USER_POSTGRES_USERNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: USER_POSTGRES_USERNAME
+            - name: USER_POSTGRES_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: USER_POSTGRES_PASSWORD
