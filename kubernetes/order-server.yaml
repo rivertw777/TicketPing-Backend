@@ -27,37 +27,82 @@ spec:
     spec:
       containers:
         - name: order-server
-          image: ticketping/order-server:latest
+          image: 654654346698.dkr.ecr.ap-northeast-2.amazonaws.com/ticketping/order-server:latest
           ports:
             - containerPort: 10013
           env:
             - name: EUREKA_SERVER
-              value: ${EUREKA_SERVER}
-            - name: ORDER_POSTGRES_URL
-              value: ${ORDER_POSTGRES_URL}
-            - name: ORDER_POSTGRES_USERNAME
-              value: ${ORDER_POSTGRES_USERNAME}
-            - name: ORDER_POSTGRES_PASSWORD
-              value: ${ORDER_POSTGRES_PASSWORD}
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: EUREKA_SERVER
             - name: REDIS_NODE_1
-              value: ${REDIS_NODE_1}
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: REDIS_NODE_1
             - name: REDIS_NODE_2
-              value: ${REDIS_NODE_2}
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: REDIS_NODE_2
             - name: REDIS_NODE_3
-              value: ${REDIS_NODE_3}
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: REDIS_NODE_3
             - name: REDIS_NODE_4
-              value: ${REDIS_NODE_4}
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: REDIS_NODE_4
             - name: REDIS_NODE_5
-              value: ${REDIS_NODE_5}
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: REDIS_NODE_5
             - name: REDIS_NODE_6
-              value: ${REDIS_NODE_6}
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: REDIS_NODE_6
             - name: KAFKA_BROKER_1
-              value: ${KAFKA_BROKER_1}
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: KAFKA_BROKER_1
             - name: KAFKA_BROKER_2
-              value: ${KAFKA_BROKER_2}
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: KAFKA_BROKER_2
             - name: KAFKA_BROKER_3
-              value: ${KAFKA_BROKER_3}
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: KAFKA_BROKER_3
             - name: LOKI_HOST
-              value: ${LOKI_HOST}
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: LOKI_HOST
             - name: ZIPKIN
-              value: ${ZIPKIN}
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: ZIPKIN
+            - name: ORDER_POSTGRES_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: ORDER_POSTGRES_URL
+            - name: ORDER_POSTGRES_USERNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: ORDER_POSTGRES_USERNAME
+            - name: ORDER_POSTGRES_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: ORDER_POSTGRES_PASSWORD

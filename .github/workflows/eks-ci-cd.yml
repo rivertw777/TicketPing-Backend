@@ -21,11 +21,48 @@ jobs:
             dockerfile_path: './eureka-server/Dockerfile'
             context_path: './eureka-server'
             k8s_manifest_path: './kubernetes/eureka-server.yaml'
+
+          - name: 'gateway-server'
+            ecr_repository: 'ticketping/gateway-server'
+            dockerfile_path: './gateway/Dockerfile'
+            context_path: './gateway'
+            k8s_manifest_path: './kubernetes/gateway-server.yaml'
+
           - name: 'auth-server'
             ecr_repository: 'ticketping/auth-server'
             dockerfile_path: './services/auth/Dockerfile'
             context_path: './services/auth'
             k8s_manifest_path: './kubernetes/auth-server.yaml'
+
+          - name: 'user-server'
+            ecr_repository: 'ticketping/user-server'
+            dockerfile_path: './services/user/Dockerfile'
+            context_path: './services/user'
+            k8s_manifest_path: './kubernetes/user-server.yaml'
+
+          - name: 'performance-server'
+            ecr_repository: 'ticketping/performance-server'
+            dockerfile_path: './services/performance/Dockerfile'
+            context_path: './services/performance'
+            k8s_manifest_path: './kubernetes/performance-server.yaml'
+
+          - name: 'order-server'
+            ecr_repository: 'ticketping/order-server'
+            dockerfile_path: './services/order/Dockerfile'
+            context_path: './services/order'
+            k8s_manifest_path: './kubernetes/order-server.yaml'
+
+          - name: 'payment-server'
+            ecr_repository: 'ticketping/payment-server'
+            dockerfile_path: './services/payment/Dockerfile'
+            context_path: './services/payment'
+            k8s_manifest_path: './kubernetes/payment-server.yaml'
+
+          - name: 'queue-manage-server'
+            ecr_repository: 'ticketping/queue-manage-server'
+            dockerfile_path: './services/queue-manage/Dockerfile'
+            context_path: './services/queue-manage'
+            k8s_manifest_path: './kubernetes/queue-manage-server.yaml'
 
     steps:
       - name: Checkout
