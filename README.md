@@ -1,12 +1,18 @@
 ## 🎫 티켓핑 : **대규모 트래픽 처리 공연 예매 서비스**
 
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/57572f9b-6c7c-4ffd-aa50-e32c2056341f" width="80%" alt="티켓핑 배경 이미지">
+</p>
+<br>
+
+## 👋🏻 프로젝트 소개
+
 티켓핑은 **대규모 트래픽** 상황에도 안정적으로 사용자들이 예매할 수 있도록
 하는 공연 예매 서비스입니다.
 
 인기 공연의 티켓팅 시에 순간 트래픽으로 인한 서버 과부하 상황을 방지하기 위해 예매 인원을 제한하는 
 
 **대기열 시스템**을 구축하였습니다.
-
 <br>
 
 ### 대기열 화면
@@ -72,7 +78,7 @@
     </tr>
     <tr>
         <td style="text-align: center;"><strong>Infra</strong></td>
-        <td style="text-align: center;"> <img src="https://img.shields.io/badge/docker-%230db7ed.svg?logo=docker&logoColor=white"/> </td>
+        <td style="text-align: center;"> <img src="https://img.shields.io/badge/docker-%230db7ed.svg?logo=docker&logoColor=white"/> <img src="https://img.shields.io/badge/Kubernetes-326CE5?logo=kubernetes&logoColor=white"/> <img src="https://img.shields.io/badge/AWS-232F3E?logo=amazonaws&logoColor=white"/> </td>
     </tr>
     <tr>
         <td style="text-align: center;"><strong>Test</strong></td>
@@ -279,19 +285,15 @@ Lua Script | - 네트워크 호출을 최소화할 수 있음 <br> - 락 해제 
 
 - [💺 좌석 데이터 캐싱 구상하기](https://github.com/TicketPing/TicketPing-Final/wiki/%F0%9F%92%BA-%EC%A2%8C%EC%84%9D-%EB%8D%B0%EC%9D%B4%ED%84%B0-%EC%BA%90%EC%8B%B1-%EA%B5%AC%EC%83%81%ED%95%98%EA%B8%B0)
 
-- [↩️ Redis Keyspace Notifications을 이용한 좌석 선점 만료 구현](https://github.com/TicketPing/TicketPing-Final/wiki/%E2%86%A9%EF%B8%8F-Redis-Keyspace-Notifications%EC%9D%84-%EC%9D%B4%EC%9A%A9%ED%95%9C-%EC%A2%8C%EC%84%9D-%EC%84%A0%EC%A0%90-%EB%A7%8C%EB%A3%8C-%EA%B5%AC%ED%98%84)
-
 - [⏰ Grafana를 이용한 통합 모니터링 및 알람 구축](https://github.com/TicketPing/TicketPing-Final/wiki/%E2%8F%B0-Grafana%EB%A5%BC-%EC%9D%B4%EC%9A%A9%ED%95%9C-%ED%86%B5%ED%95%A9-%EB%AA%A8%EB%8B%88%ED%84%B0%EB%A7%81-%EB%B0%8F-%EC%95%8C%EB%9E%8C-%EA%B5%AC%EC%B6%95)
 
-- [⚡ 게이트웨이에 서킷브레이커 구축](https://github.com/TicketPing/TicketPing-Final/wiki/%E2%9A%A1-%EA%B2%8C%EC%9D%B4%ED%8A%B8%EC%9B%A8%EC%9D%B4%EC%97%90-%EC%84%9C%ED%82%B7%EB%B8%8C%EB%A0%88%EC%9D%B4%EC%BB%A4-%EA%B5%AC%EC%B6%95)
+- [⚡ 서킷브레이커 구축하기](https://github.com/TicketPing/TicketPing-Final/wiki/%E2%9A%A1-%EA%B2%8C%EC%9D%B4%ED%8A%B8%EC%9B%A8%EC%9D%B4%EC%97%90-%EC%84%9C%ED%82%B7%EB%B8%8C%EB%A0%88%EC%9D%B4%EC%BB%A4-%EA%B5%AC%EC%B6%95)
 
 <br>
 
 ## ⚽️ 트러블슈팅
 
 - [🎁 Lua Script를 활용한 대기열 진입 동시성 문제 해결](https://github.com/TicketPing/TicketPing-Final/wiki/%F0%9F%8E%81-Lua-Script%EB%A5%BC-%ED%99%9C%EC%9A%A9%ED%95%9C-%EB%8C%80%EA%B8%B0%EC%97%B4-%EC%A7%84%EC%9E%85-%EB%8F%99%EC%8B%9C%EC%84%B1-%EB%AC%B8%EC%A0%9C-%ED%95%B4%EA%B2%B0)
-
-- [🥇 Lua Script를 이용한 좌석 선점 동시성 문제 해결](https://github.com/TicketPing/TicketPing-Final/wiki/%F0%9F%A5%87-Lua-Script%EB%A5%BC-%EC%9D%B4%EC%9A%A9%ED%95%9C-%EC%A2%8C%EC%84%9D-%EC%84%A0%EC%A0%90-%EB%8F%99%EC%8B%9C%EC%84%B1-%EB%AC%B8%EC%A0%9C-%ED%95%B4%EA%B2%B0) 
 
 - [🗣️ Redis Cluster 적용 이후 Lua Script 실행 오류 문제 해결](https://github.com/TicketPing/TicketPing-Final/wiki/%F0%9F%97%A3%EF%B8%8F-Redis-Cluster-%EC%A0%81%EC%9A%A9-%EC%9D%B4%ED%9B%84-Lua-Script-%EC%8B%A4%ED%96%89-%EC%98%A4%EB%A5%98-%EB%AC%B8%EC%A0%9C-%ED%95%B4%EA%B2%B0)
 
