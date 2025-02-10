@@ -289,6 +289,8 @@ Lua Script | - 네트워크 호출을 최소화할 수 있음 <br> - 락 해제 
 
 - [⚡ 서킷브레이커 구축하기](https://github.com/TicketPing/TicketPing-Final/wiki/%E2%9A%A1-%EC%84%9C%ED%82%B7%EB%B8%8C%EB%A0%88%EC%9D%B4%EC%BB%A4-%EA%B5%AC%EC%B6%95%ED%95%98%EA%B8%B0)
 
+- [👩‍💼 Kubernetes 클러스터 구축하기](https://github.com/rivertw777/TicketPing-Backend/wiki/%F0%9F%91%A9%E2%80%8D%F0%9F%92%BC-%EC%BF%A0%EB%B2%84%EB%84%A4%ED%8B%B0%EC%8A%A4-%ED%81%B4%EB%9F%AC%EC%8A%A4%ED%84%B0-%EA%B5%AC%EC%B6%95%ED%95%98%EA%B8%B0)
+
 <br>
 
 ## ⚽️ 트러블슈팅
