@@ -325,7 +325,7 @@ Lua Script | - 네트워크 호출을 최소화할 수 있음 <br> - 락 해제 
           - 공연 서비스 개발 <br>
           - 주문 서비스 개발 <br>
           - 게이트웨이 JWT 인증 필터 개발 <br>
-          - 게이트웨이 서킷 브레이커 설정 <br>
+          - 서킷 브레이커 설정 <br>
           - 모니터링 시스템 구축 <br>
         </td>
         <td align="center"><a href="https://github.com/mii2026">GitHub</a></td>
