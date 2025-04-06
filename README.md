@@ -1,10 +1,5 @@
 ## 🎫 티켓핑 : **대규모 트래픽 처리 공연 예매 서비스**
 
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/57572f9b-6c7c-4ffd-aa50-e32c2056341f" width="80%" alt="티켓핑 배경 이미지">
-</p>
-<br>
-
 ## 👋🏻 프로젝트 소개
 
 티켓핑은 **대규모 트래픽** 상황에도 안정적으로 사용자들이 예매할 수 있도록
