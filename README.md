@@ -42,8 +42,6 @@
 
 - **공통 모듈**: 코드 중복을 최소화하고 일관성을 유지하기 위해 공통 모듈 사용
 
-- **Kubernetes**: 컨테이너화된 애플리케이션의 배포, 확장 및 관리 자동화
-    
 <br>
 
 ## 🛠️ 시스템 아키텍처
@@ -77,7 +75,7 @@
     </tr>
     <tr>
         <td style="text-align: center;"><strong>Infra</strong></td>
-        <td style="text-align: center;"> <img src="https://img.shields.io/badge/docker-%230db7ed.svg?logo=docker&logoColor=white"/> <img src="https://img.shields.io/badge/Kubernetes-326CE5?logo=kubernetes&logoColor=white"/> <img src="https://img.shields.io/badge/AWS-232F3E?logo=amazonaws&logoColor=white"/> </td>
+        <td style="text-align: center;"> <img src="https://img.shields.io/badge/docker-%230db7ed.svg?logo=docker&logoColor=white"/> </td>
     </tr>
     <tr>
         <td style="text-align: center;"><strong>Test</strong></td>
@@ -288,8 +286,6 @@ Lua Script | - 네트워크 호출을 최소화할 수 있음 <br> - 락 해제 
 
 - [⚡ 서킷브레이커 구축하기](https://github.com/TicketPing/TicketPing-Final/wiki/%E2%9A%A1-%EC%84%9C%ED%82%B7%EB%B8%8C%EB%A0%88%EC%9D%B4%EC%BB%A4-%EA%B5%AC%EC%B6%95%ED%95%98%EA%B8%B0)
 
-- [👩‍💼 Kubernetes 클러스터 구축하기](https://github.com/rivertw777/TicketPing-Backend/wiki/%F0%9F%91%A9%E2%80%8D%F0%9F%92%BC-%EC%BF%A0%EB%B2%84%EB%84%A4%ED%8B%B0%EC%8A%A4-%ED%81%B4%EB%9F%AC%EC%8A%A4%ED%84%B0-%EA%B5%AC%EC%B6%95%ED%95%98%EA%B8%B0)
-
 <br>
 
 ## ⚽️ 트러블슈팅
@@ -315,7 +311,6 @@ Lua Script | - 네트워크 호출을 최소화할 수 있음 <br> - 락 해제 
           - 결제 서비스 개발 <br>
           - 게이트웨이 예매 API 선처리 필터 개발 <br>
           - Redis, Kafka 클러스터 구축 <br>
-          - Kubernetes 클러스터 구축 <br>
         </td>
         <td align="center"><a href="https://github.com/rivertw777">GitHub</a></td>
     </tr>
