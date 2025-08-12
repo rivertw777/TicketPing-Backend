@@ -12,16 +12,12 @@ public class KafkaTopicConfig {
     @Bean
     public NewTopic seatReservationTopic() {
         return TopicBuilder.name(OrderTopic.COMPLETED_FOR_SEAT_RESERVATION.getTopic())
-                .partitions(3)
-                .replicas(3)
                 .build();
     }
 
     @Bean
     public NewTopic queueTokenRemovalTopic() {
         return TopicBuilder.name(OrderTopic.COMPLETED_FOR_QUEUE_TOKEN_REMOVAL.getTopic())
-                .partitions(3)
-                .replicas(3)
                 .build();
     }
 

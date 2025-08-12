@@ -17,7 +17,7 @@ public class SeatClientController {
 
     private final SeatService seatService;
 
-    @Operation(summary = "좌석 주문 정보 조회 (order 서비스에서 호출용)")
+    @Operation(summary = "좌석 주문 정보 조회 (order 서비스 호출용)")
     @GetMapping("/{seatId}/order-info")
     public ResponseEntity<CommonResponse<OrderSeatResponse>> getOrderSeatInfo(@RequestHeader("X_USER_ID") UUID userId,
                                                                               @PathVariable("seatId") UUID seatId,

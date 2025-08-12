@@ -10,6 +10,7 @@ import java.util.Arrays;
 @Getter
 @RequiredArgsConstructor
 public enum SeatStatus {
+
     AVAILABLE("AVAILABLE"),
     HELD("HELD"),
     RESERVED("RESERVED");
@@ -18,7 +19,7 @@ public enum SeatStatus {
 
     public static SeatStatus getSeatStatus(final String value) {
         return Arrays.stream(SeatStatus.values())
-        .filter(t -> t.getValue().equals(value))
-        .findAny().orElseThrow(() -> new ApplicationException(SeatExceptionCase.INVALID_SEAT_STATUS));
-        }
+                .filter(t -> t.getValue().equals(value))
+                .findAny().orElseThrow(() -> new ApplicationException(SeatExceptionCase.INVALID_SEAT_STATUS));
+    }
 }

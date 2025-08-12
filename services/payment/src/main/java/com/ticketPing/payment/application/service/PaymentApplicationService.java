@@ -80,6 +80,7 @@ public class PaymentApplicationService {
         return PaymentResponse.from(payment);
     }
 
+    @Transactional(readOnly = true)
     public PaymentResponse getCompletedPaymentByOrderId(UUID orderId) {
         Payment payment = paymentDomainService.getCompletedPaymentByOrderId(orderId);
         return PaymentResponse.from(payment);

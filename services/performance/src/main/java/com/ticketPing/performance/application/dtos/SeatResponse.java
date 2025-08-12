@@ -7,7 +7,6 @@ import lombok.Builder;
 
 import java.util.UUID;
 
-
 @Builder(access = AccessLevel.PRIVATE)
 public record SeatResponse (
         UUID seatId,

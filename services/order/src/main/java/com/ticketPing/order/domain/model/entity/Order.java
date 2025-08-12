@@ -1,6 +1,5 @@
 package com.ticketPing.order.domain.model.entity;
 
-
 import auditing.BaseEntity;
 import com.ticketPing.order.domain.model.enums.OrderStatus;
 import jakarta.persistence.*;

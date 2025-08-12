@@ -88,7 +88,6 @@ public class OrderService {
         publishForQueueTokenRemoval(order.getUserId(), order.getPerformanceId());
     }
 
-    @Transactional
     private Order saveOrderWithOrderSeat(UUID userId, OrderSeatResponse orderData) {
         Order order = Order.from(userId, orderData);
         Order savedOrder = orderRepository.save(order);

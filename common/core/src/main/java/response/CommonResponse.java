@@ -1,12 +1,10 @@
 package response;
 
-
 import exception.ErrorCase;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
-
 
 @Builder
 @Getter
