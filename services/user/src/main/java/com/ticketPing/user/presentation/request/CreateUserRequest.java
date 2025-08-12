@@ -14,4 +14,4 @@ public record CreateUserRequest(
 
         @NotBlank(message = UserInfoErrorMessage.NICKNAME_REQUIRED)
         String nickname
-) { }
+) {}

@@ -15,4 +15,5 @@ public enum CircuitBreakerErrorCase implements ErrorCase {
 
     private final HttpStatus httpStatus;
     private final String message;
+
 }

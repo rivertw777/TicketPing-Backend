@@ -18,7 +18,6 @@ import java.util.UUID;
 
 import static com.ticketPing.auth.common.constants.AuthConstants.AUTHORIZATION_HEADER;
 
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/auth")

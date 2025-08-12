@@ -10,4 +10,5 @@ public enum SeatTopic {
     PRE_RESERVE_EXPIRED("pre-reserve-expired");
 
     private final String topic;
+
 }

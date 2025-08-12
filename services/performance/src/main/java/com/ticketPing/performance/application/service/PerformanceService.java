@@ -18,7 +18,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-
 @Service
 @RequiredArgsConstructor
 public class PerformanceService {
@@ -73,4 +72,3 @@ public class PerformanceService {
                 .orElseThrow(() -> new ApplicationException(PerformanceExceptionCase.PERFORMANCE_NOT_FOUND));
     }
 }
-

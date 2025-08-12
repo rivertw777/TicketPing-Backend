@@ -1,4 +1,5 @@
 package com.ticketPing.user.application.dto;
+
 import com.ticketPing.user.domain.model.entity.User;
 import lombok.AccessLevel;
 import lombok.Builder;
