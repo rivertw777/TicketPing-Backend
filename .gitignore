@@ -37,10 +37,4 @@ out/
 ### VS Code ###
 .vscode/
 
-application**local.yml
-
 docker-compose/.env
-
-docker-compose-test.yml
-
-kubernetes/env-config.yaml
